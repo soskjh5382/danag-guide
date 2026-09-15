@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>다낭 여행 가이드</title>
+  <title>다낭 여행 가이드 (통합 완충본)</title>
   <style>
     :root {
       --sea: #0e7c86; --sea-deep: #0a5a62; --lantern: #f0913e;
@@ -54,7 +54,7 @@
     .check-box { display: flex; align-items: flex-start; gap: 10px; }
     .check-box input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--sea); flex: 0 0 auto; }
 
-    /* 환율 계산기 (모바일 레이아웃 최적화) */
+    /* 환율 계산기 */
     .calc { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; width: 100%; box-sizing: border-box; }
     .calc-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; width: 100%; }
     .calc-row label { font-size: 13.5px; font-weight: 600; flex: 0 0 65px; white-space: nowrap; }
@@ -103,40 +103,54 @@
   <div class="panel" id="panel-emergency"></div>
 </main>
 <script>
-  /* ====== 데이터 ====== */
+  /* ====== 전체 데이터 (중복 제거 & 누락본 완벽 추가) ====== */
   const SIGHTS = [
-    { name:"바나힐 & 골든브릿지", loc:"서부 (Hòa Vang)", desc:"거대한 손이 받치는 다리, 세계 최장 케이블카(20분), 유럽풍 테마파크. 다낭 필수 코스 1순위", meta:"자유이용권 · 아침 일찍 권장", tip:"산 정상은 시내보다 5~8℃ 낮음. 얇은 겉옷·편한 운동화 필수. Klook·KKday 사전예매 추천", map:"https://www.google.com/maps/place/?q=place_id:ChIJj9PFGT33QTERDbUKRxFsdmM" },
-    { name:"호이안 고대도시", loc:"남부 (Hội An)", desc:"유네스코 세계문화유산. 등불 거리와 올드타운. 밤에 등불 켜지면 야경이 뛰어남", meta:"구역별 티켓 · 저녁 추천", tip:"낮보다 해질녘~밤이 훨씬 예쁨. 소원등 띄우기 및 야시장 추천", map:"https://www.google.com/maps/place/?q=place_id:ChIJ_____30AQjERvWC803vwZfw" },
+    { name:"바나힐 & 골든브릿지", loc:"서부 (Hòa Vang)", desc:"거대한 손이 받치는 다리, 세계 최장 케이블카(20분), 유럽풍 테마파크. 다낭 필수 코스 1순위", meta:"자유이용권 · 아침 일찍 권장", tip:"산 정상은 시내보다 5~8℃ 낮음. 얇은 겉옷·편한 운동화 필수. Klook·KKday 사전예매 추천", map:"https://www.google.com/maps/search/?api=1&query=Bana+Hills+Da+Nang" },
+    { name:"호이안 고대도시", loc:"남부 (Hội An)", desc:"유네스코 세계문화유산. 등불 거리와 올드타운. 밤에 등불 켜지면 야경이 뛰어남", meta:"구역별 티켓 · 저녁 추천", tip:"낮보다 해질녘~밤이 훨씬 예쁨. 소원등 띄우기 및 야시장 추천", map:"https://www.google.com/maps/search/?api=1&query=Hoi+An+Ancient+Town" },
     { name:"선짜 야시장 (Son Tra Night Market)", loc:"용다리 동편 (Sơn Trà)", desc:"해산물 구이, 기념품, 길거리 음식을 즐길 수 있는 야시장", meta:"18:00~23:00 · 입장료 무료", tip:"용다리 불쇼(주말 21시) 본 후 도보로 이동하기 좋음", map:"https://www.google.com/maps/search/?api=1&query=Son+Tra+Night+Market+Da+Nang" },
-    { name:"오행산 (마블마운틴)", loc:"남부 (Ngũ Hành Sơn)", desc:"석회암 동굴 사원과 전망대. 계단이 많아 산책 겸 관광하기 좋음", meta:"약 4만동 · 07:00~17:30", tip:"편한 신발 필수. 엘리베이터(유료) 탑승 추천", map:"https://www.google.com/maps/place/?q=place_id:ChIJ2y5L4dQNQjERxeSLc68fbrw" },
+    { name:"오행산 (마블마운틴)", loc:"남부 (Ngũ Hành Sơn)", desc:"석회암 동굴 사원과 전망대. 계단이 많아 산책 겸 관광하기 좋음", meta:"약 4만동 · 07:00~17:30", tip:"편한 신발 필수. 엘리베이터(유료) 탑승 추천", map:"https://www.google.com/maps/search/?api=1&query=Marble+Mountains+Da+Nang" },
     { name:"미케비치 (My Khe Beach)", loc:"동부 해안 (An Hải)", desc:"다낭 대표 백사장. 일출 명소, 해수욕·산책·서핑 가능", meta:"무료 · 일출/노을 추천", tip:"아침 일출 명소. 저녁에는 해변가 펍·식당이 활기참", map:"https://www.google.com/maps/search/?api=1&query=My+Khe+Beach+Da+Nang" },
-    { name:"한강 & 용다리 (Dragon Bridge)", loc:"시내 중심 (Hải Châu)", desc:"용 조각 다리. 주말 밤 9시 불·물 쇼 진행. 한강 야경 산책 코스", meta:"주말 21:00 쇼 · 무료", tip:"쇼 끝나면 그랩 잡기 어려우므로 근처 카페나 야시장 이동 추천", map:"https://www.google.com/maps/place/?q=place_id:ChIJL1GKWJYZQjERLrEGqlK2kwQ" },
+    { name:"한강 & 용다리 (Dragon Bridge)", loc:"시내 중심 (Hải Châu)", desc:"용 조각 다리. 주말 밤 9시 불·물 쇼 진행. 한강 야경 산책 코스", meta:"주말 21:00 쇼 · 무료", tip:"쇼 끝나면 그랩 잡기 어려우므로 근처 카페나 야시장 이동 추천", map:"https://www.google.com/maps/search/?api=1&query=Dragon+Bridge+Da+Nang" },
     { name:"안방비치 (An Bang Beach)", loc:"호이안 북부", desc:"호이안 근교의 여유롭고 서양적인 분위기의 해변. 비치클럽 다수", meta:"무료 · 낮~노을 시간 추천", tip:"데크체어에 누워 음료나 맥주 마시며 휴식하기 좋음", map:"https://www.google.com/maps/search/?api=1&query=An+Bang+Beach+Hoi+An" },
     { name:"사랑의 다리 & 잉어용 조각상", loc:"한강변 (Hải Châu)", desc:"사랑의 자물쇠 산책로 + 잉어용 조각상. 야경 포토존", meta:"무료 · 야간 추천", tip:"용다리 바로 근처. 사진 찍기 좋음", map:"https://www.google.com/maps/search/?api=1&query=Love+Bridge+Da+Nang" },
-    { name:"린응사 (Linh Ung)", loc:"손트라반도 (Sơn Trà)", desc:"거대 해수관음상, 탁 트인 바다 전망. 해안 드라이브 추천", meta:"무료 · 06:00~21:00", tip:"손짜반도 드라이브 코스. 노출이 과한 복장은 제한될 수 있음", map:"https://www.google.com/maps/place/?q=place_id:ChIJHZakNa8ZQjERWNFToM16eB4" },
-    { name:"다낭 대성당 (핑크성당)", loc:"시내 중심 (Hải Châu)", desc:"프랑스 수탈기 건축된 분홍빛 고딕 성당. 대표 포토스팟", meta:"평일 개방 · 일요일 미사", tip:"한시장 바로 근처. 외관 포토존으로 유명", map:"https://www.google.com/maps/place/?q=place_id:ChIJ75pYOI8ZQjEReb8Mw6ThCZQ" },
+    { name:"링엄사 / 린응사 (Linh Ung)", loc:"손트라반도 (Sơn Trà)", desc:"거대 해수관음상, 탁 트인 바다 전망. 해안 드라이브 추천", meta:"무료 · 06:00~21:00", tip:"손짜반도 드라이브 코스. 노출이 과한 복장은 제한될 수 있음", map:"https://www.google.com/maps/search/?api=1&query=Linh+Ung+Pagoda+Son+Tra+Da+Nang" },
+    { name:"다낭 대성당 (핑크성당)", loc:"시내 중심 (Hải Châu)", desc:"프랑스 수탈기 건축된 분홍빛 고딕 성당. 대표 포토스팟", meta:"평일 개방 · 일요일 미사", tip:"한시장 바로 근처. 외관 포토존으로 유명", map:"https://www.google.com/maps/search/?api=1&query=Da+Nang+Cathedral" },
     { name:"한시장 (Han Market)", loc:"시내 중심 (Hải Châu)", desc:"아오자이 맞춤, 기념품, 건과일, 크록스 구매 필수 재래시장", meta:"06:00~19:00", tip:"흥정 필수(부르는 값의 50~60% 선). 소매치기 주의", map:"https://www.google.com/maps/search/?api=1&query=Han+Market+Da+Nang" },
+    { name:"미선 성지 (My Son)", loc:"남서부 (Quảng Nam)", desc:"참파 왕국 역사 유적지, 유네스코 세계문화유산, 힌두 사원군", meta:"약 15만동 · 06:00~17:00", tip:"호이안 출발 반일 투어 활용 권장", map:"https://www.google.com/maps/search/?api=1&query=My+Son+Sanctuary" },
+    { name:"하이반 고개 (Hai Van Pass)", loc:"북부 (Hải Vân)", desc:"베트남 대표 해안 드라이브 코스, 역사적 관문 전망대", meta:"무료 · 낮 시간대 권장", tip:"차량/택시 이용 드라이브 추천, 날씨 좋은 날 방문", map:"https://www.google.com/maps/search/?api=1&query=Hai+Van+Pass" },
+    { name:"참섬 (Cu Lao Cham)", loc:"동부 해상", desc:"유네스코 생물권 보전지역, 스노클링 및 다이빙 명소", meta:"투어 약 50만동~", tip:"스피드보트 이동, 날씨 및 파도 영향 주의", map:"https://www.google.com/maps/search/?api=1&query=Cham+Islands" },
+    { name:"남오 어촌마을", loc:"북서부 (Liên Chiểu)", desc:"피쉬소스(느억맘) 특산 마을, 현지 감성 전통 어촌 풍경", meta:"무료", tip:"조용한 한적함을 원할 때 산책하기 좋은 코스", map:"https://www.google.com/maps/search/?api=1&query=Nam+O+Fish+Sauce+Village" },
   ];
 
   const KOREAN = [
-    { name:"다낭 주방 한식당", loc:"한시장 바로 앞 (Hải Châu)", desc:"순두부·김치찌개, 삼겹살, 제육볶음 등 다채로운 메뉴. 한시장 동선 최고", meta:"홀 ~24:00 / 배달 ~새벽 02:00", rating:"4.8", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJUQcvKQAZQjERr3u0Gv6yAIc" },
-    { name:"오늘은등갈비", loc:"미케비치 (An Hải)", desc:"등갈비 콤보, 김치갈비찜, 냉면. 한국인 사장 운영", meta:"15:30~23:00 · 연중무휴", rating:"4.9", tel:"+84795685387", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJp6qyd7wXQjERnEa62cI3Fug" },
+    { name:"다낭 주방 한식당", loc:"한시장 바로 앞 (Hải Châu)", desc:"순두부·김치찌개, 삼겹살, 제육볶음 등 다채로운 메뉴. 한시장 동선 최고", meta:"영업시간 유동적(전화 확인)", rating:"4.7", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Jubang+Korean+Restaurant+Da+Nang" },
+    { name:"오늘은등갈비", loc:"미케비치 (An Hải)", desc:"등갈비 콤보, 김치갈비찜, 냉면. 한국인 사장 운영", meta:"15:30~23:00 · 연중무휴", rating:"4.9", tel:"+84795685387", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Today+Ribs+Da+Nang" },
     { name:"해운대 24시국밥", loc:"팜반동 코리아타운 (Sơn Trà)", desc:"돼지국밥, 순대국밥, 수육. 한국식 국밥 전문점", meta:"11:00~21:30 (브레이크타임 있음)", rating:"4.7", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Haeundae+24h+Gukbap+Da+Nang" },
-    { name:"연꽃식당 (Yonkot)", loc:"미케비치 (An Hải)", desc:"삼겹살 BBQ, 후라이드치킨, 비빔밥. 깔끔한 내부", meta:"11:30~15:30, 17:00~22:00", rating:"4.8", tel:"+84708471248", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJZydebQ0ZQjERxLLpfiKKL6Y" },
-    { name:"윤식당 (호이안)", loc:"호이안 (Hội An)", desc:"숯불 BBQ, 해물파전, 생맥주·막걸리. 올드타운 인기 식당", meta:"12:00~22:00 · 연중무휴", rating:"4.7", tel:"+84935174356", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJB5o7WHwOQjER0Dbq6MuRnqI" },
-    { name:"칠성돈까스", loc:"미케비치 (An Hải)", desc:"왕돈까스, 카츠카레, 매운소고기국밥. 수제 돈까스 맛집", meta:"10:30~15:30, 17:00~20:20 · 토 휴무", rating:"4.5", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJZWNNVN4ZQjERw7zk9_JxGxA" },
-    { name:"달빛포차 (Dalbit)", loc:"박당거리 (Hải Châu)", desc:"한국식 안주, 심야 포차, 한강 야경 조망", meta:"18:00~새벽 04:00 · 심야 영업", rating:"4.9", tel:"+84796510001", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJ3-MkGPUZQjERO3PGQ6woD_U" },
-    { name:"독도 한식당 (Dokdo)", loc:"미케비치 (An Hải)", desc:"뼈해장국, 푸짐한 반찬, 늦은 시간까지 식사 가능", meta:"10:30~새벽 03:00 · 심야", rating:"4.8", tel:"+84949890718", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJocVz55kXQjER2n7UptQDrYg" },
+    { name:"연꽃식당 (Yonkot)", loc:"미케비치 (An Hải)", desc:"삼겹살 BBQ, 후라이드치킨, 비빔밥. 깔끔한 내부", meta:"11:30~15:30, 17:00~22:00", rating:"4.8", tel:"+84708471248", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Yonkot+Korean+Restaurant+Da+Nang" },
+    { name:"윤식당 (호이안)", loc:"호이안 (Hội An)", desc:"숯불 BBQ, 해물파전, 생맥주·막걸리. 올드타운 대형 인기점", meta:"12:00~22:00 · 연중무휴", rating:"4.7", tel:"+84935174356", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Yoon+Restaurant+Hoi+An" },
+    { name:"칠성반점 (호이안)", loc:"호이안 (Hội An)", desc:"짜장, 짬뽕, 볶음밥, 떡볶이. 한국식 중식 및 분식", meta:"11:30~21:30 · 일요일 휴무", rating:"4.9", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Chilseong+Korean+Chinese+Hoi+An" },
+    { name:"칠성돈까스", loc:"미케비치 (An Hải)", desc:"왕돈까스, 카츠카레, 매운소고기국밥. 수제 돈까스 맛집", meta:"10:30~15:30, 17:00~20:20 · 토 휴무", rating:"4.5", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Chilseong+Donkatsu+Da+Nang" },
+    { name:"소담 코리아 BBQ", loc:"롯데마트 2층 (Hòa Cường)", desc:"소·돼지 콤보, 된장찌개, 계란찜. 쇼핑 후 들르기 좋은 매장", meta:"롯데마트 영업시간 (약 10:00~22:00)", rating:"4.8", tel:"+84383539996", grab:false, map:"https://www.google.com/maps/search/?api=1&query=Sodam+Korea+BBQ+Lotte+Mart+Da+Nang" },
+    { name:"달빛포차 (Dalbit)", loc:"박당거리 (Hải Châu)", desc:"한국식 안주, 심야 포차, 한강 야경 조망", meta:"18:00~새벽 04:00 · 심야 영업", rating:"4.9", tel:"+84796510001", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Dalbit+Pocha+Da+Nang" },
+    { name:"달빛식당 (호이안)", loc:"호이안 (Hội An Đông)", desc:"한식 + 밀크티빙수, 떡볶이, 김밥, 치킨", meta:"11:00~21:30 · 수요일 휴무", rating:"4.7", tel:"+84987431202", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Dalbit+Restaurant+Hoi+An" },
+    { name:"Korea BBQ House (한국가든)", loc:"미케비치 (Ngũ Hành Sơn)", desc:"순두부, 김치찌개, 냉면, BBQ 구이 전문점", meta:"10:30~23:00 (주말 ~23:30)", rating:"4.8", tel:"+84898082452", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Korea+BBQ+House+Da+Nang" },
+    { name:"고국남 (Gogubnam)", loc:"미케비치 (An Hải)", desc:"소갈비·삼겹살 세트, 반찬 무한 리필 BBQ", meta:"11:00~14:00, 16:30~23:00", rating:"4.9", tel:"+84979397156", grab:false, map:"https://www.google.com/maps/search/?api=1&query=Gogubnam+Da+Nang" },
+    { name:"GUPGO BBQ (겁고)", loc:"미케비치 (An Hải)", desc:"두꺼운 생삼겹살, 양념갈비 전문 구이집", meta:"11:30~23:30", rating:"4.8", tel:"+84353764657", grab:false, map:"https://www.google.com/maps/search/?api=1&query=GUPGO+BBQ+Da+Nang" },
+    { name:"독도 한식당 (Dokdo)", loc:"미케비치 (An Hải)", desc:"뼈해장국, 푸짐한 백반 반찬 8종, 심야 영업", meta:"10:30~새벽 03:00 · 심야", rating:"4.8", tel:"+84949890718", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Dokdo+Korean+Restaurant+Da+Nang" },
+    { name:"From Soul (프롬쏘울)", loc:"핑크성당 근처 (Hải Châu)", desc:"제육덮밥, 호떡, 세트메뉴. 포장 및 테이크아웃 용이", meta:"10:00~14:00, 16:00~22:00 (주말 종일)", rating:"4.6", tel:"+84703550310", grab:true, map:"https://www.google.com/maps/search/?api=1&query=From+Soul+Da+Nang" },
   ];
 
   const FOOD = [
-    { name:"란조 (Làn Gió) ★강추", loc:"핑크성당 맞은편 (Hải Châu)", desc:"새우 요리 등 해산물 & 베트남 정식. 직원이 새우를 직접 까줌", meta:"10:30~22:30 · 연중무휴", rating:"4.7", tel:"+84973972074", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJNRSpo9EZQjERliMnRlTXtFc" },
-    { name:"목꽌 씨푸드 (Moc Quan)", loc:"미케비치 (An Hải)", desc:"크랩, 랍스터 등 싱싱한 해산물 직접 지정. 미슐랭 가이드 선정", meta:"10:00~22:00", rating:"4.8", map:"https://www.google.com/maps/place/?q=place_id:ChIJx6-KGnIXQjER7x-T0zeOlBw" },
-    { name:"반쎄오 바지야 (Ba Duong)", loc:"시내 골목 (Hải Châu)", desc:"다낭 대표 반쎄오 맛집. 넴루이(고기꼬치)와 특제 땅콩소스", meta:"09:30~21:00", rating:"4.3", map:"https://www.google.com/maps/place/?q=place_id:ChIJrSiIJ8oZQjERn2-PvhzOCuU" },
+    { name:"란조 (Làn Gió) ★지인 추천", loc:"핑크성당 맞은편 (Hải Châu)", desc:"새우 요리 등 해산물 & 베트남 정식. 직원이 새우를 직접 까줌", meta:"10:30~22:30 · 연중무휴", rating:"4.7", tel:"+84973972074", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Lan+Gio+Restaurant+Da+Nang" },
+    { name:"목꽌 씨푸드 (Moc Quan)", loc:"미케비치 (An Hải)", desc:"크랩, 랍스터 등 싱싱한 해산물 직접 지정. 미슐랭 가이드 선정", meta:"10:00~22:00", rating:"4.8", grab:false, map:"https://www.google.com/maps/search/?api=1&query=Moc+Quan+Da+Nang" },
+    { name:"반쎄오 바지야 (Ba Duong)", loc:"시내 골목 (Hải Châu)", desc:"다낭 대표 미슐랭 반쎄오 맛집. 넴루이(고기꼬치)와 특제 땅콩소스", meta:"09:30~21:00 · 화요일 휴무", rating:"4.3", grab:false, map:"https://www.google.com/maps/search/?api=1&query=Banh+Seo+Ba+Duong+Da+Nang" },
+    { name:"미꽝 꼬사우 (Co Sau)", loc:"미케비치 (An Hải)", desc:"다낭 대표 비빔 면요리 미꽝 전문점. 미슐랭 셀렉트", meta:"06:00~21:00", rating:"4.5", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Mi+Quang+Co+Sau+Da+Nang" },
+    { name:"다낭집 쩌한 (Nha Bep)", loc:"한시장 옆 (Hải Châu)", desc:"한국인 입맛에 잘 맞는 깔끔한 베트남 요리 전문점 (꼬치, 반쎄오 등)", meta:"08:00~23:30", rating:"4.6", tel:"+84389683835", grab:false, map:"https://www.google.com/maps/search/?api=1&query=Nha+Bep+Han+Market+Da+Nang" },
+    { name:"반미 킴 (Banh Mi Kim)", loc:"한시장 근처 (Hải Châu)", desc:"그릴드 치킨 반미와 코코넛 커피 조합이 유연한 인기 반미 매장", meta:"07:00~19:00", rating:"4.9", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Banh+Mi+Kim+Da+Nang" },
     { name:"포박하이 (Pho Bac Hai)", loc:"한시장 근처 (Hải Châu)", desc:"진하고 담백한 북부식 소고기 쌀국수(퍼보). 가성비 뛰어남", meta:"06:00~21:00", rating:"4.5", tip:"칠리소스 살짝 넣고 마늘초절임 곁들이면 깊은 맛↑", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Pho+Bac+Hai+Da+Nang" },
-    { name:"보네 란흐엉 (Bo Ne Lan Huong)", loc:"시내 (Hải Châu)", desc:"베트남식 철판 스테이크(보네) 전문점. 계란후라이+바게트 조합", meta:"06:00~11:00 (아침 전용)", rating:"4.6", map:"https://www.google.com/maps/search/?api=1&query=Bo+Ne+Lan+Huong+Da+Nang" },
+    { name:"보네 란흐엉 (Bo Ne Lan Huong)", loc:"시내 (Hải Châu)", desc:"베트남식 철판 스테이크(보네) 전문점. 계란후라이+바게트 조합", meta:"06:00~11:00 (아침 전용)", rating:"4.6", grab:false, map:"https://www.google.com/maps/search/?api=1&query=Bo+Ne+Lan+Huong+Da+Nang" },
     { name:"반미 코티엔 (Banh Mi Co Tien)", loc:"시내 (Hải Châu)", desc:"에그치즈반미, 소고기반미. 바삭하고 가성비 좋은 반미집", meta:"06:30~22:00", rating:"4.6", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Banh+Mi+Co+Tien+Da+Nang" },
-    { name:"바반 분맘넴 (Bun Mam Nem)", loc:"시내 (Hải Châu)", desc:"다낭 향토 국수 '분맘넴'(발효 젓갈 비빔국수) 전문점", meta:"07:00~23:00", rating:"4.5", map:"https://www.google.com/maps/search/?api=1&query=Bun+Mam+Nem+Tran+Ke+Xuong+Da+Nang" },
+    { name:"바반 분맘넴 (Bun Mam Nem)", loc:"시내 (Hải Châu)", desc:"다낭 향토 국수 '분맘넴'(발효 젓갈 비빔국수) 전문점", meta:"07:00~23:00", rating:"4.5", grab:false, map:"https://www.google.com/maps/search/?api=1&query=Bun+Mam+Nem+Tran+Ke+Xuong+Da+Nang" },
   ];
 
   const CAFE = [
@@ -200,7 +214,7 @@
     { h:"🏧 TPBank ATM 무료 인출", p:"토스 외화체크카드 사용 시 TPBank ATM에서 수수료 없이 현지 통화 인출 가능.", warn:false },
   ];
 
-  /* ====== 렌더링 함수 ====== */
+  /* ====== UI 렌더링 함수 ====== */
   const TABS = [
     { id:"check", label:"📋 체크리스트" }, { id:"sights", label:"🏛️ 관광지" },
     { id:"korean", label:"🍚 한식당" }, { id:"food", label:"🍜 로컬맛집" },
@@ -243,6 +257,7 @@
     </div>`;
   }
 
+  /* 각 패널 바인딩 */
   document.getElementById("panel-sights").innerHTML = `<div class="count">관광지·유적지 ${SIGHTS.length}곳</div>` + SIGHTS.map(placeCard).join("");
   document.getElementById("panel-korean").innerHTML = `<div class="count">한식당 ${KOREAN.length}곳</div>` + KOREAN.map(placeCard).join("");
   document.getElementById("panel-food").innerHTML = `<div class="count">로컬·미슐랭 맛집 ${FOOD.length}곳</div>` + FOOD.map(placeCard).join("");
@@ -272,7 +287,7 @@
   </div>
 `;
 
-  /* 환율 패널 */
+  /* 환율 계산기 */
   document.getElementById("panel-calc").innerHTML = `
   <div class="calc">
     <div class="calc-row"><label>동 (VND)</label><input type="number" id="vnd" inputmode="numeric" placeholder="0"><span>동</span></div>
