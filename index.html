@@ -1,81 +1,88 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>다낭 여행 가이드</title>
-<style>
-  :root {
-    --sea: #0e7c86; --sea-deep: #0a5a62; --lantern: #f0913e;
-    --sand: #faf7f2; --card: #ffffff; --ink: #1f2933;
-    --dim: #6b7684; --line: #e8e2d8; --ok: #2e9e5b;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
-    background: var(--sand); color: var(--ink); line-height: 1.6; padding-bottom: 40px; }
-  header { background: linear-gradient(135deg, var(--sea) 0%, var(--sea-deep) 100%);
-    color: #fff; padding: 26px 18px 20px; position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.12); }
-  header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
-  header p { font-size: 13px; opacity: 0.85; margin-top: 3px; }
-  .tabs { display: flex; gap: 7px; overflow-x: auto; margin-top: 16px; padding-bottom: 2px; scrollbar-width: none; }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab { flex: 0 0 auto; padding: 9px 15px; border-radius: 999px; background: rgba(255,255,255,0.15);
-    color: #fff; font-size: 14px; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
-  .tab.active { background: var(--lantern); color: #fff; }
-  main { max-width: 640px; margin: 0 auto; padding: 18px 14px; }
-  .panel { display: none; }
-  .panel.active { display: block; animation: fade 0.25s ease; }
-  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-  .count { font-size: 13px; color: var(--dim); margin-bottom: 12px; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 16px 14px; margin-bottom: 12px; }
-  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-  .card-name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
-  .rating { flex: 0 0 auto; font-size: 13px; font-weight: 700; color: var(--lantern); background: #fff5eb; padding: 2px 8px; border-radius: 8px; }
-  .loc { font-size: 13px; color: var(--sea); font-weight: 600; margin-top: 4px; }
-  .desc { font-size: 14px; color: var(--ink); margin-top: 8px; }
-  .meta { font-size: 12.5px; color: var(--dim); margin-top: 6px; }
-  .meta b { color: var(--ink); font-weight: 600; }
-  .tel-line { font-size: 12.5px; color: var(--dim); margin-top: 4px; }
-  .tip { font-size: 12.5px; color: var(--sea-deep); background: #eef6f7; padding: 7px 10px; border-radius: 8px; margin-top: 8px; }
-  .actions { display: flex; gap: 8px; margin-top: 12px; }
-  .btn { flex: 1; text-align: center; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 700;
-    text-decoration: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
-  .btn-map { background: var(--sea); color: #fff; }
-  .btn-tel { background: var(--ok); color: #fff; }
-  .btn-grab { background: #fff; color: var(--sea); border: 1.5px solid var(--sea); font-size: 12.5px; }
-  .check-section { margin-bottom: 22px; }
-  .check-section h2 { font-size: 16px; color: var(--sea-deep); font-weight: 700; padding-bottom: 8px; border-bottom: 2px solid var(--line); margin-bottom: 12px; }
-  .check-item { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 13px 15px; margin-bottom: 9px; }
-  .check-item h3 { font-size: 14.5px; font-weight: 700; margin-bottom: 4px; }
-  .check-item p { font-size: 13.5px; color: var(--dim); }
-  .check-item .hi { color: var(--lantern); font-weight: 700; }
-  .check-box { display: flex; align-items: flex-start; gap: 10px; }
-  .check-box input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--sea); flex: 0 0 auto; }
-  .calc { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
-  .calc-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-  .calc-row label { font-size: 14px; font-weight: 600; flex: 0 0 62px; }
-  .calc-row input { flex: 1; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 10px; font-size: 18px; font-weight: 600; text-align: right; color: var(--ink); }
-  .calc-row input:focus { outline: none; border-color: var(--sea); }
-  .calc-row span { font-size: 14px; color: var(--dim); flex: 0 0 auto; }
-  .calc-note { font-size: 12.5px; color: var(--dim); margin-top: 6px; text-align: center; }
-  .calc-quick { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 14px; }
-  .calc-quick button { flex: 1; min-width: 64px; padding: 9px; border: 1px solid var(--line); background: var(--sand); border-radius: 9px; font-size: 13px; font-weight: 600; color: var(--sea-deep); cursor: pointer; }
-  .phrase { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 13px 15px; margin-bottom: 9px; }
-  .phrase .ko { font-size: 14.5px; font-weight: 700; }
-  .phrase .vi { font-size: 15px; color: var(--sea); font-weight: 600; margin-top: 3px; }
-  .phrase .pron { font-size: 13px; color: var(--dim); margin-top: 2px; }
-  .phrase-group { font-size: 14px; font-weight: 700; color: var(--sea-deep); margin: 18px 0 9px; }
-  .emergency { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 15px; margin-bottom: 10px; }
-  .emergency h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
-  .emergency a { color: var(--ok); font-weight: 700; text-decoration: none; }
-  .emergency p { font-size: 13.5px; color: var(--dim); margin-top: 4px; }
-  .section-label { font-size: 15px; font-weight: 700; color: var(--sea-deep); margin: 18px 0 10px; }
-  .tipcard { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
-  .tipcard h3 { font-size: 14.5px; font-weight: 700; margin-bottom: 5px; color: var(--sea-deep); }
-  .tipcard p { font-size: 13.5px; color: var(--ink); }
-  .tipcard .warn { color: #c0392b; font-weight: 600; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>다낭 여행 가이드</title>
+  <style>
+    :root {
+      --sea: #0e7c86; --sea-deep: #0a5a62; --lantern: #f0913e;
+      --sand: #faf7f2; --card: #ffffff; --ink: #1f2933;
+      --dim: #6b7684; --line: #e8e2d8; --ok: #2e9e5b;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+      background: var(--sand); color: var(--ink); line-height: 1.6; padding-bottom: 40px; overflow-x: hidden; }
+    header { background: linear-gradient(135deg, var(--sea) 0%, var(--sea-deep) 100%);
+      color: #fff; padding: 20px 16px 16px; position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12); width: 100%; }
+    header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+    header p { font-size: 12.5px; opacity: 0.85; margin-top: 2px; }
+    .tabs { display: flex; gap: 6px; overflow-x: auto; margin-top: 14px; padding-bottom: 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab { flex: 0 0 auto; padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.18);
+      color: #fff; font-size: 13.5px; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+    .tab.active { background: var(--lantern); color: #fff; }
+    main { max-width: 640px; margin: 0 auto; padding: 16px 12px; width: 100%; box-sizing: border-box; }
+    .panel { display: none; width: 100%; }
+    .panel.active { display: block; animation: fade 0.25s ease; }
+    @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .count { font-size: 13px; color: var(--dim); margin-bottom: 12px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .card-name { font-size: 16.5px; font-weight: 700; letter-spacing: -0.01em; word-break: keep-all; }
+    .rating { flex: 0 0 auto; font-size: 12.5px; font-weight: 700; color: var(--lantern); background: #fff5eb; padding: 2px 7px; border-radius: 6px; }
+    .loc { font-size: 12.5px; color: var(--sea); font-weight: 600; margin-top: 4px; word-break: break-all; }
+    .desc { font-size: 13.5px; color: var(--ink); margin-top: 7px; }
+    .meta { font-size: 12px; color: var(--dim); margin-top: 5px; }
+    .tel-line { font-size: 12px; color: var(--dim); margin-top: 4px; }
+    .tip { font-size: 12px; color: var(--sea-deep); background: #eef6f7; padding: 7px 9px; border-radius: 8px; margin-top: 8px; }
+    .actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    .btn { flex: 1; min-width: 100px; text-align: center; padding: 9px; border-radius: 8px; font-size: 13px; font-weight: 700;
+      text-decoration: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; border: none; }
+    .btn-map { background: var(--sea); color: #fff; }
+    .btn-tel { background: var(--ok); color: #fff; }
+    .btn-grab { background: #fff; color: var(--sea); border: 1.5px solid var(--sea); font-size: 12px; width: 100%; margin-top: 4px; }
+
+    /* 체크리스트 */
+    .check-section { margin-bottom: 20px; }
+    .check-section h2 { font-size: 15.5px; color: var(--sea-deep); font-weight: 700; padding-bottom: 6px; border-bottom: 2px solid var(--line); margin-bottom: 10px; }
+    .check-item { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-bottom: 8px; }
+    .check-item h3 { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+    .check-item p { font-size: 13px; color: var(--dim); }
+    .check-item .hi { color: var(--lantern); font-weight: 700; }
+    .check-box { display: flex; align-items: flex-start; gap: 10px; }
+    .check-box input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--sea); flex: 0 0 auto; }
+
+    /* 환율 계산기 (모바일 레이아웃 최적화) */
+    .calc { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; width: 100%; box-sizing: border-box; }
+    .calc-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; width: 100%; }
+    .calc-row label { font-size: 13.5px; font-weight: 600; flex: 0 0 65px; white-space: nowrap; }
+    .calc-row input { flex: 1; min-width: 0; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 16px; font-weight: 600; text-align: right; color: var(--ink); width: 100%; box-sizing: border-box; }
+    .calc-row input:focus { outline: none; border-color: var(--sea); }
+    .calc-row span { font-size: 13.5px; color: var(--dim); flex: 0 0 24px; text-align: right; }
+    .calc-note { font-size: 12px; color: var(--dim); margin-top: 6px; text-align: center; }
+    .calc-quick { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; width: 100%; }
+    .calc-quick button { flex: 1 1 calc(25% - 6px); min-width: 60px; padding: 8px 4px; border: 1px solid var(--line); background: var(--sand); border-radius: 8px; font-size: 12.5px; font-weight: 600; color: var(--sea-deep); cursor: pointer; text-align: center; }
+
+    /* 회화 */
+    .phrase { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; margin-bottom: 8px; }
+    .phrase .ko { font-size: 14px; font-weight: 700; }
+    .phrase .vi { font-size: 14.5px; color: var(--sea); font-weight: 600; margin-top: 2px; }
+    .phrase .pron { font-size: 12.5px; color: var(--dim); margin-top: 1px; }
+    .phrase-group { font-size: 14px; font-weight: 700; color: var(--sea-deep); margin: 16px 0 8px; }
+
+    /* 긴급 & 팁 */
+    .emergency { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 13px; margin-bottom: 8px; }
+    .emergency h3 { font-size: 14.5px; font-weight: 700; margin-bottom: 6px; }
+    .emergency a { color: var(--ok); font-weight: 700; text-decoration: none; }
+    .emergency p { font-size: 13px; color: var(--dim); margin-top: 3px; }
+    .section-label { font-size: 14.5px; font-weight: 700; color: var(--sea-deep); margin: 16px 0 8px; }
+    .tipcard { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 13px; margin-bottom: 8px; }
+    .tipcard h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; color: var(--sea-deep); }
+    .tipcard p { font-size: 13px; color: var(--ink); }
+    .tipcard .warn { color: #c0392b; font-weight: 600; }
+  </style>
 </head>
 <body>
 <header>
@@ -96,131 +103,136 @@
   <div class="panel" id="panel-emergency"></div>
 </main>
 <script>
-/* ====== 데이터 — 여기만 고치면 항목 추가/수정 가능 ====== */
-const SIGHTS = [
-  { name:"바나힐 & 골든브릿지", loc:"서부 (Hòa Vang)", desc:"거대한 손이 받치는 다리, 세계 최장 케이블카(20분), 유럽풍 테마파크. 다낭 필수 코스 1순위", meta:"자유이용권 · 아침 일찍 권장", tip:"산 정상은 시내보다 5~8℃ 낮음. 얇은 겉옷·편한 운동화 필수. Klook·KKday 사전예매 시 10~15% 할인+QR 바로입장", map:"https://www.google.com/maps/place/?q=place_id:ChIJj9PFGT33QTERDbUKRxFsdmM" },
-  { name:"호이안 고대도시", loc:"남부 (Hội An)", desc:"유네스코 세계문화유산. 등불 거리와 올드타운. 밤에 등불 켜지면 최고", meta:"구역별 티켓 · 저녁 추천", tip:"낮보다 해질녘~밤이 훨씬 예쁨. 소원등 띄우기 인기", map:"https://www.google.com/maps/place/?q=place_id:ChIJ_____30AQjERvWC803vwZfw" },
-  { name:"오행산 (마블마운틴)", loc:"남부 (Ngũ Hành Sơn)", desc:"석회암 동굴 사원과 전망대. 계단 많음", meta:"약 4만동 · 7:00~17:30", tip:"편한 신발 필수. 엘리베이터(유료) 있음", map:"https://www.google.com/maps/place/?q=place_id:ChIJ2y5L4dQNQjERxeSLc68fbrw" },
-  { name:"미케비치 (My Khe Beach)", loc:"동부 해안 (An Hải)", desc:"다낭 대표 백사장. 일출 명소, 해수욕·산책·서핑", meta:"무료 · 일출 추천", tip:"아침 일출 유명. 저녁엔 해변가 펍·식당 활기참", map:"https://www.google.com/maps/search/?api=1&query=My+Khe+Beach+Da+Nang" },
-  { name:"한강 & 용다리 (Dragon Bridge)", loc:"시내 중심 (Hải Châu)", desc:"용 조각 다리. 주말 밤 9시 불·물 쇼. 한강 야경 산책", meta:"주말 21:00 쇼 · 무료", tip:"쇼 끝나면 그랩 잡기 어려움. 근처서 도보 이동 추천", map:"https://www.google.com/maps/place/?q=place_id:ChIJL1GKWJYZQjERLrEGqlK2kwQ" },
-  { name:"사랑의 다리 & 잉어용 조각상", loc:"한강변 (Hải Châu)", desc:"사랑의 자물쇠 산책로 + 잉어용 조각상. 야경 포토존", meta:"무료 · 야간 추천", tip:"용다리 바로 근처. 커플·야경 사진 명소", map:"https://www.google.com/maps/search/?api=1&query=Love+Bridge+Da+Nang" },
-  { name:"린응사 (Linh Ung)", loc:"손트라반도 (Sơn Trà)", desc:"거대 대관세음보살상, 바다 전망. 원숭이 산", meta:"무료 · 6:00~21:00", tip:"손짜반도 드라이브 코스와 함께. 노출 심한 복장 자제", map:"https://www.google.com/maps/place/?q=place_id:ChIJHZakNa8ZQjERWNFToM16eB4" },
-  { name:"다낭 대성당 (핑크성당)", loc:"시내 중심 (Hải Châu)", desc:"프랑스 시대 분홍 고딕 성당. 인증샷 명소", meta:"평일 개방 · 일요일 미사만", tip:"내부는 미사 시간 외 제한적. 외관 포토존", map:"https://www.google.com/maps/place/?q=place_id:ChIJ75pYOI8ZQjEReb8Mw6ThCZQ" },
-  { name:"미선 성지 (My Son)", loc:"남서부 (Quảng Nam)", desc:"참파 왕국 힌두 사원 유적. 유네스코 세계유산", meta:"약 15만동 · 6:00~17:00", tip:"오전 일찍 가면 덜 덥고 한적함. 그늘 적으니 모자·물 필수", map:"https://www.google.com/maps/place/?q=place_id:ChIJH1VVVYEAQjERe2ifm4aiugg" },
-  { name:"하이반 고개", loc:"북부 (Hải Vân)", desc:"역사적 전망대, 하이반 관문. 드라이브 명소", meta:"무료", tip:"후에 가는 길에 들르기 좋음. 안개 자주 낌", map:"https://www.google.com/maps/place/?q=place_id:EibEkMOobyBI4bqjaSBWw6JuLCDEkMOgIE7hurVuZywgVmlldG5hbSIuKiwKFAoSCUWQDK-TIUIxEdAEiDC-88_hEhQKEgkTKiWSxxlCMREGfnKGS8vwHQ" },
-  { name:"아시아 파크 & 썬휠", loc:"한강변 (Hải Châu)", desc:"높이 115m 대관람차 '썬휠'과 10개 문화구역 테마파크", meta:"※ 현재 임시 휴장 (재개장 확인)", tip:"방문 전 운영 여부 꼭 확인. 야간 라이트업이 매력", map:"https://www.google.com/maps/search/?api=1&query=Asia+Park+Da+Nang" },
-  { name:"참섬 (Cu Lao Cham)", loc:"동부 해상", desc:"유네스코 생물권 보전지역. 스노클링·다이빙 투어", meta:"투어 약 50만동~", tip:"당일 투어 예약. 우기·풍랑 시 출항 취소 가능", map:"https://www.google.com/maps/place/?q=place_id:ChIJE3rjnS1sQjER7l7gO_QdSHo" },
-  { name:"한시장 (Han Market)", loc:"시내 중심 (Hải Châu)", desc:"기념품·과일·먹거리 재래시장. 쇼핑+환전 동선", meta:"06:00~19:00", tip:"흥정 필수(부르는 값의 50~60%부터). 소매치기 주의", map:"https://www.google.com/maps/search/?api=1&query=Han+Market+Da+Nang" },
-];
-const KOREAN = [
-  { name:"오늘은등갈비", loc:"미케비치 (An Hải)", desc:"등갈비 콤보, 김치갈비찜, 냉면. 한국인 사장", meta:"15:30~23:00 · 연중무휴", rating:"4.9", tel:"+84795685387", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJp6qyd7wXQjERnEa62cI3Fug" },
-  { name:"연꽃식당 (Yonkot)", loc:"미케비치 (An Hải)", desc:"삼겹살 BBQ, 후라이드치킨, 비빔밥", meta:"11:30~15:30, 17:00~22:00", rating:"4.8", tel:"+84708471248", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJZydebQ0ZQjERxLLpfiKKL6Y" },
-  { name:"다낭 주방 한식당", loc:"한시장 앞 (Hải Châu)", desc:"순두부·김치찌개, 물냉면, 무한 삼겹살 이벤트", meta:"영업시간 유동적 (전화 확인)", rating:"4.7", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJUQcvKQAZQjERr3u0Gv6yAIc" },
-  { name:"윤식당 (호이안)", loc:"호이안 (Hội An)", desc:"숯불 BBQ, 해물파전, 생맥주·막걸리. 대형 인기점", meta:"12:00~22:00 · 연중무휴", rating:"4.7", tel:"+84935174356", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJB5o7WHwOQjER0Dbq6MuRnqI" },
-  { name:"칠성반점 (호이안)", loc:"호이안 (Hội An)", desc:"짜장·짬뽕, 볶음밥, 떡볶이. 한식+중식", meta:"11:30~21:30 · 일요일 휴무", rating:"4.9", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJpTB8K5wPQjER8mALs5YeK2E" },
-  { name:"칠성돈까스", loc:"미케비치 (An Hải)", desc:"왕돈까스, 카츠카레, 매운소고기국밥", meta:"10:30~15:30, 17:00~20:20 · 토요일 휴무", rating:"4.5", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJZWNNVN4ZQjERw7zk9_JxGxA" },
-  { name:"소담 코리아 BBQ", loc:"롯데마트 2층 (Hòa Cường)", desc:"소·돼지 콤보, 된장찌개, 계란찜. 롯데마트 내", meta:"약 10~22시", rating:"4.8", tel:"+84383539996", map:"https://www.google.com/maps/place/?q=place_id:ChIJ1SnwDTgZQjERX7qONCG0RsU" },
-  { name:"달빛포차 (Dalbit)", loc:"박당거리 (Hải Châu)", desc:"한국식 야식·안주, 심야 포차. 한국인 사장", meta:"18:00~새벽4:00 · 연중무휴 · 심야", rating:"4.9", tel:"+84796510001", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJ3-MkGPUZQjERO3PGQ6woD_U" },
-  { name:"달빛식당 (호이안)", loc:"호이안 (Hội An Đông)", desc:"한식+밀크티·빙수. 떡볶이·김밥·치킨", meta:"11:00~21:30 · 수요일 휴무", rating:"4.7", tel:"+84987431202", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJ2bG3L7INQjER9uHX-4xre6I" },
-  { name:"Korea BBQ House (한국가든)", loc:"미케비치 (Ngũ Hành Sơn)", desc:"순두부·김치찌개, 냉면, BBQ", meta:"10:30~23:00 · 주말 ~23:30", rating:"4.8", tel:"+84898082452", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJRaHks2wXQjERVMrWhffmRXw" },
-  { name:"고국남 (Gogubnam)", loc:"미케비치 (An Hải)", desc:"소갈비·삼겹살 세트, 반찬 무한", meta:"11:00~14:00, 16:30~23:00", rating:"4.9", tel:"+84979397156", map:"https://www.google.com/maps/place/?q=place_id:ChIJ47gOej0ZQjER9xhSAiNHpXg" },
-  { name:"GUPGO BBQ (겁고)", loc:"미케비치 (An Hải)", desc:"두꺼운 삼겹살, 갈비", meta:"11:30~23:30", rating:"4.8", tel:"+84353764657", map:"https://www.google.com/maps/place/?q=place_id:ChIJYSmNUwoXQjER1Z7iZ9zoUL4" },
-  { name:"독도 한식당 (Dokdo)", loc:"미케비치 (An Hải)", desc:"뼈해장국, 백반+반찬 8종", meta:"10:30~새벽 3:00 · 심야", rating:"4.8", tel:"+84949890718", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJocVz55kXQjER2n7UptQDrYg" },
-  { name:"From Soul (프롬쏘울)", loc:"핑크성당 근처 (Hải Châu)", desc:"제육덮밥, 호떡, 세트메뉴. 테이크아웃 가능", meta:"10~14시, 16~22시 (주말 종일)", rating:"4.6", tel:"+84703550310", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJD-BuxOMZQjERgJuFkaH816I" },
-];
-const FOOD = [
-  { name:"란조 (Làn Gió) ★지인추천", loc:"핑크성당 바로 앞 (Hải Châu)", desc:"새우요리 등 해산물·베트남 요리. 직원이 새우를 직접 까줌", meta:"10:30~22:30 · 연중무휴", rating:"4.7", tel:"+84973972074", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJNRSpo9EZQjERliMnRlTXtFc" },
-  { name:"목꽌 씨푸드 (Moc Quan)", loc:"미케비치 (An Hải)", desc:"랍스터·게 직접 고르는 해산물. 미슐랭", meta:"약 10:00~22:00", rating:"4.8", map:"https://www.google.com/maps/place/?q=place_id:ChIJx6-KGnIXQjER7x-T0zeOlBw" },
-  { name:"반쎄오 바지야 (Ba Duong)", loc:"시내 (Hải Châu)", desc:"미슐랭 반쎄오. 넴루이(꼬치), 특제소스", meta:"화요일 휴무", rating:"4.3", map:"https://www.google.com/maps/place/?q=place_id:ChIJrSiIJ8oZQjERn2-PvhzOCuU" },
-  { name:"미꽝 꼬사우 (Co Sau)", loc:"미케비치 (An Hải)", desc:"다낭 대표 면요리 미꽝. 미슐랭 셀렉트", meta:"약 6:00~21:00", rating:"4.5", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJgRyzBl8ZQjERJF9sFGvE4R8" },
-  { name:"포박하이 (Pho Bac Hai)", loc:"한시장 근처 (Hải Châu)", desc:"진한 소고기 쌀국수(퍼보). 현지인 아침식사 인기. 약 5만동", meta:"약 6:00~21:00", rating:"4.5", tip:"칠리소스 반 스푼 넣으면 감칠맛↑. 물티슈로 수저 닦고 쓰기 추천", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Pho+Bac+Hai+Da+Nang" },
-  { name:"반미 코티엔 (Banh Mi Co Tien)", loc:"시내 (Hải Châu)", desc:"소고기치즈반미, 닭고기에그반미. 아침·간식 반미 맛집", meta:"06:30~22:00", rating:"4.6", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Banh+Mi+Co+Tien+Da+Nang" },
-  { name:"룩락 (LUK LAK)", loc:"시내 (Hải Châu)", desc:"분짜, 연잎볶음밥, 분옥 쌀국수. 깔끔한 베트남 정찬", meta:"07:00~22:30", rating:"4.5", map:"https://www.google.com/maps/search/?api=1&query=LUK+LAK+Da+Nang" },
-  { name:"분짜까 109", loc:"시내 (Hải Châu)", desc:"수제 어묵 쌀국수(분짜까). 어묵만 포장해가는 사람도 많음", meta:"약 6:00~21:00", rating:"4.4", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Bun+Cha+Ca+109+Da+Nang" },
-  { name:"반미 킴 (Banh Mi Kim)", loc:"한시장 근처 (Hải Châu)", desc:"인기 반미. 그릴치킨 반미+코코넛커피", meta:"약 7:00~19:00", rating:"4.9", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJ35a1SGUZQjER2T5aqZ-6vjU" },
-];
-const CAFE = [
-  { name:"콩카페 (Cộng Càphê)", loc:"한강변 등 여러 지점", desc:"베트남 대표 감성 카페. 코코넛 스무디 커피가 시그니처", meta:"약 07:00~23:00", rating:"4.5", tip:"코코넛 커피 꼭 드세요. 한강뷰 지점 인기", map:"https://www.google.com/maps/search/?api=1&query=Cong+Caphe+Da+Nang" },
-  { name:"찐카페 (Trinh Cafe)", loc:"시내 (Hải Châu)", desc:"베트남 전통 커피와 과일 음료. 로컬 감성", meta:"07:00~22:00", rating:"4.6", map:"https://www.google.com/maps/search/?api=1&query=Trinh+Cafe+Da+Nang" },
-  { name:"더 커피 하우스", loc:"시내 여러 지점", desc:"베트남 체인 카페. 에어컨·와이파이 좋아 더울 때 피신처", meta:"약 07:00~22:00", rating:"4.4", tip:"한낮 더위 피하기 좋음. 코코넛/연유 커피 추천", map:"https://www.google.com/maps/search/?api=1&query=The+Coffee+House+Da+Nang" },
-];
-const SPA = [
-  { name:"판다 릴렉스 스파 (Panda)", loc:"미케비치 바로 앞 (An Hải)", desc:"미케비치 앞 위치로 접근 편리. 아로마·핫스톤 마사지", meta:"약 10:00~22:00", rating:"4.6", tip:"픽드랍 가능 여부 예약 시 확인. 압 세기 'Softer please'로 조절", map:"https://www.google.com/maps/search/?api=1&query=Panda+Relax+Spa+Da+Nang" },
-  { name:"허벌 스파 (Herbal Spa)", loc:"시내 (Hải Châu)", desc:"실력 좋기로 유명한 인기 스파. 예약 권장", meta:"약 10:00~22:30", rating:"4.7", tip:"2인 이상 90분 예약 시 시내 왕복 무료 픽드랍 되는 곳 많음", map:"https://www.google.com/maps/search/?api=1&query=Herbal+Spa+Da+Nang" },
-  { name:"틴틴 스파 (Tin Tin)", loc:"시내 (Hải Châu)", desc:"호텔 병설로 깔끔. 테라피스트 많아 대기 적음. 짐 보관 가능", meta:"약 10:00~22:00", rating:"4.6", tip:"오일 아로마 2만원대. 마지막 날 짐 맡기고 받기 좋음", map:"https://www.google.com/maps/search/?api=1&query=Tin+Tin+Spa+Da+Nang" },
-];
-const PHRASES = [
-  { g:"기본 인사", list:[
-    { ko:"안녕하세요", vi:"Xin chào", pron:"신 짜오" },
-    { ko:"감사합니다", vi:"Cảm ơn", pron:"깜 언" },
-    { ko:"죄송합니다", vi:"Xin lỗi", pron:"신 로이" },
-    { ko:"네 / 아니요", vi:"Vâng / Không", pron:"벙 / 콤" },
-    { ko:"안녕히 가세요", vi:"Tạm biệt", pron:"땀 비엣" },
-  ]},
-  { g:"쇼핑·흥정", list:[
-    { ko:"얼마예요?", vi:"Bao nhiêu tiền?", pron:"바오 니에우 띠엔?" },
-    { ko:"너무 비싸요", vi:"Đắt quá", pron:"닷 꾸아" },
-    { ko:"깎아 주세요", vi:"Giảm giá đi", pron:"쟘 쟈 디" },
-    { ko:"이거 주세요", vi:"Cho tôi cái này", pron:"쪼 또이 까이 나이" },
-    { ko:"안 살래요 / 됐어요", vi:"Không mua", pron:"콤 무아" },
-  ]},
-  { g:"식당", list:[
-    { ko:"계산해 주세요", vi:"Tính tiền", pron:"띤 띠엔" },
-    { ko:"맛있어요", vi:"Ngon quá", pron:"응온 꾸아" },
-    { ko:"안 맵게 해주세요", vi:"Không cay", pron:"콤 까이" },
-    { ko:"물 주세요", vi:"Cho tôi nước", pron:"쪼 또이 느억" },
-    { ko:"메뉴 주세요", vi:"Cho tôi thực đơn", pron:"쪼 또이 특 던" },
-    { ko:"포장해 주세요", vi:"Cho tôi mang về", pron:"쪼 또이 망 베" },
-  ]},
-  { g:"이동·긴급", list:[
-    { ko:"여기로 가주세요", vi:"Cho tôi đến đây", pron:"쪼 또이 덴 더이" },
-    { ko:"화장실 어디예요?", vi:"Nhà vệ sinh ở đâu?", pron:"냐 베 신 어 더우?" },
-    { ko:"도와주세요", vi:"Giúp tôi với", pron:"쥽 또이 버이" },
-    { ko:"괜찮아요", vi:"Không sao", pron:"콤 사오" },
-    { ko:"살살 해주세요 (마사지)", vi:"Nhẹ hơn", pron:"녜 헌" },
-  ]},
-];
-const TIPS = [
-  { h:"🛵 이동은 그랩(Grab) 필수", p:"택시보다 안전하고 요금 미리 표시. 공항은 지정 그랩 픽업존(P1/P2)에서 탑승. 일반택시는 비나선·마이린만, 미터기 확인.", warn:false },
-  { h:"💵 흥정은 기본", p:"시장·노점은 부르는 값의 50~60%부터 시작. 마트·식당은 정찰제라 흥정 안 함. 웃으면서 '닷 꾸아(너무 비싸요)'.", warn:false },
-  { h:"👜 소매치기 주의", p:"한시장·미케비치 산책로에서 오토바이 2인조가 가방·폰 낚아채는 사건 있음. 가방은 몸 안쪽으로, 걸으며 폰 꺼내지 않기.", warn:true },
-  { h:"💳 결제 사기 주의", p:"현지인이 '대신 결제해주겠다'며 지갑에 손대 큰 금액 빼가는 수법 있음. 본인이 직접 결제하기.", warn:true },
-  { h:"🕛 한낮(12~15시)은 실내로", p:"기온 30도↑. 낮엔 에어컨 카페·마사지, 관광은 아침저녁으로. 자외선 차단·물 챙기기.", warn:false },
-  { h:"💧 물갈이·배탈 주의", p:"생수만 마시고 얼음 조심. 해산물·길거리 음식은 위생 확인. 정로환 등 배탈약 필수.", warn:false },
-  { h:"💆 마사지 팁", p:"압 세기는 'Softer please(살살)'. 팁은 5~10만동 정도가 관례(강제 아님). 2인+90분이면 무료 픽드랍 되는 곳 많음.", warn:false },
-  { h:"🏧 환전·현금", p:"토스카드로 TPBank ATM 인출이 수수료 무료로 유리. 한시장·금은방 환전소도 환율 비슷. 로컬은 현금만.", warn:false },
-];
+  /* ====== 데이터 ====== */
+  const SIGHTS = [
+    { name:"바나힐 & 골든브릿지", loc:"서부 (Hòa Vang)", desc:"거대한 손이 받치는 다리, 세계 최장 케이블카(20분), 유럽풍 테마파크. 다낭 필수 코스 1순위", meta:"자유이용권 · 아침 일찍 권장", tip:"산 정상은 시내보다 5~8℃ 낮음. 얇은 겉옷·편한 운동화 필수. Klook·KKday 사전예매 추천", map:"https://www.google.com/maps/place/?q=place_id:ChIJj9PFGT33QTERDbUKRxFsdmM" },
+    { name:"호이안 고대도시", loc:"남부 (Hội An)", desc:"유네스코 세계문화유산. 등불 거리와 올드타운. 밤에 등불 켜지면 야경이 뛰어남", meta:"구역별 티켓 · 저녁 추천", tip:"낮보다 해질녘~밤이 훨씬 예쁨. 소원등 띄우기 및 야시장 추천", map:"https://www.google.com/maps/place/?q=place_id:ChIJ_____30AQjERvWC803vwZfw" },
+    { name:"선짜 야시장 (Son Tra Night Market)", loc:"용다리 동편 (Sơn Trà)", desc:"해산물 구이, 기념품, 길거리 음식을 즐길 수 있는 야시장", meta:"18:00~23:00 · 입장료 무료", tip:"용다리 불쇼(주말 21시) 본 후 도보로 이동하기 좋음", map:"https://www.google.com/maps/search/?api=1&query=Son+Tra+Night+Market+Da+Nang" },
+    { name:"오행산 (마블마운틴)", loc:"남부 (Ngũ Hành Sơn)", desc:"석회암 동굴 사원과 전망대. 계단이 많아 산책 겸 관광하기 좋음", meta:"약 4만동 · 07:00~17:30", tip:"편한 신발 필수. 엘리베이터(유료) 탑승 추천", map:"https://www.google.com/maps/place/?q=place_id:ChIJ2y5L4dQNQjERxeSLc68fbrw" },
+    { name:"미케비치 (My Khe Beach)", loc:"동부 해안 (An Hải)", desc:"다낭 대표 백사장. 일출 명소, 해수욕·산책·서핑 가능", meta:"무료 · 일출/노을 추천", tip:"아침 일출 명소. 저녁에는 해변가 펍·식당이 활기참", map:"https://www.google.com/maps/search/?api=1&query=My+Khe+Beach+Da+Nang" },
+    { name:"한강 & 용다리 (Dragon Bridge)", loc:"시내 중심 (Hải Châu)", desc:"용 조각 다리. 주말 밤 9시 불·물 쇼 진행. 한강 야경 산책 코스", meta:"주말 21:00 쇼 · 무료", tip:"쇼 끝나면 그랩 잡기 어려우므로 근처 카페나 야시장 이동 추천", map:"https://www.google.com/maps/place/?q=place_id:ChIJL1GKWJYZQjERLrEGqlK2kwQ" },
+    { name:"안방비치 (An Bang Beach)", loc:"호이안 북부", desc:"호이안 근교의 여유롭고 서양적인 분위기의 해변. 비치클럽 다수", meta:"무료 · 낮~노을 시간 추천", tip:"데크체어에 누워 음료나 맥주 마시며 휴식하기 좋음", map:"https://www.google.com/maps/search/?api=1&query=An+Bang+Beach+Hoi+An" },
+    { name:"사랑의 다리 & 잉어용 조각상", loc:"한강변 (Hải Châu)", desc:"사랑의 자물쇠 산책로 + 잉어용 조각상. 야경 포토존", meta:"무료 · 야간 추천", tip:"용다리 바로 근처. 사진 찍기 좋음", map:"https://www.google.com/maps/search/?api=1&query=Love+Bridge+Da+Nang" },
+    { name:"린응사 (Linh Ung)", loc:"손트라반도 (Sơn Trà)", desc:"거대 해수관음상, 탁 트인 바다 전망. 해안 드라이브 추천", meta:"무료 · 06:00~21:00", tip:"손짜반도 드라이브 코스. 노출이 과한 복장은 제한될 수 있음", map:"https://www.google.com/maps/place/?q=place_id:ChIJHZakNa8ZQjERWNFToM16eB4" },
+    { name:"다낭 대성당 (핑크성당)", loc:"시내 중심 (Hải Châu)", desc:"프랑스 수탈기 건축된 분홍빛 고딕 성당. 대표 포토스팟", meta:"평일 개방 · 일요일 미사", tip:"한시장 바로 근처. 외관 포토존으로 유명", map:"https://www.google.com/maps/place/?q=place_id:ChIJ75pYOI8ZQjEReb8Mw6ThCZQ" },
+    { name:"한시장 (Han Market)", loc:"시내 중심 (Hải Châu)", desc:"아오자이 맞춤, 기념품, 건과일, 크록스 구매 필수 재래시장", meta:"06:00~19:00", tip:"흥정 필수(부르는 값의 50~60% 선). 소매치기 주의", map:"https://www.google.com/maps/search/?api=1&query=Han+Market+Da+Nang" },
+  ];
 
-/* ====== 렌더 ====== */
-const TABS = [
-  { id:"check", label:"📋 체크리스트" }, { id:"sights", label:"🏛️ 관광지" },
-  { id:"korean", label:"🍚 한식당" }, { id:"food", label:"🍜 로컬맛집" },
-  { id:"cafe", label:"☕ 카페" }, { id:"spa", label:"💆 마사지" },
-  { id:"calc", label:"💱 환율" }, { id:"phrase", label:"🗣️ 회화" },
-  { id:"tips", label:"💡 꿀팁" }, { id:"emergency", label:"🆘 긴급" },
-];
-const tabsEl = document.getElementById("tabs");
-TABS.forEach((t, i) => {
-  const b = document.createElement("button");
-  b.className = "tab" + (i === 0 ? " active" : "");
-  b.textContent = t.label;
-  b.onclick = () => showTab(t.id, b);
-  tabsEl.appendChild(b);
-});
-function showTab(id, btn) {
-  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-  document.getElementById("panel-" + id).classList.add("active");
-  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-  btn.classList.add("active");
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-function placeCard(p) {
-  const rating = p.rating ? `<span class="rating">⭐ ${p.rating}</span>` : "";
-  const telLine = p.tel ? `<div class="tel-line">📞 ${p.tel}</div>` : "";
-  const tel = p.tel ? `<a class="btn btn-tel" href="tel:${p.tel}">📞 전화</a>` : "";
-  const grab = p.grab ? `<span class="btn btn-grab">🛵 Grab 배달</span>` : "";
-  const tip = p.tip ? `<div class="tip">💡 ${p.tip}</div>` : "";
-  return `<div class="card">
+  const KOREAN = [
+    { name:"다낭 주방 한식당", loc:"한시장 바로 앞 (Hải Châu)", desc:"순두부·김치찌개, 삼겹살, 제육볶음 등 다채로운 메뉴. 한시장 동선 최고", meta:"홀 ~24:00 / 배달 ~새벽 02:00", rating:"4.8", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJUQcvKQAZQjERr3u0Gv6yAIc" },
+    { name:"오늘은등갈비", loc:"미케비치 (An Hải)", desc:"등갈비 콤보, 김치갈비찜, 냉면. 한국인 사장 운영", meta:"15:30~23:00 · 연중무휴", rating:"4.9", tel:"+84795685387", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJp6qyd7wXQjERnEa62cI3Fug" },
+    { name:"해운대 24시국밥", loc:"팜반동 코리아타운 (Sơn Trà)", desc:"돼지국밥, 순대국밥, 수육. 한국식 국밥 전문점", meta:"11:00~21:30 (브레이크타임 있음)", rating:"4.7", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Haeundae+24h+Gukbap+Da+Nang" },
+    { name:"연꽃식당 (Yonkot)", loc:"미케비치 (An Hải)", desc:"삼겹살 BBQ, 후라이드치킨, 비빔밥. 깔끔한 내부", meta:"11:30~15:30, 17:00~22:00", rating:"4.8", tel:"+84708471248", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJZydebQ0ZQjERxLLpfiKKL6Y" },
+    { name:"윤식당 (호이안)", loc:"호이안 (Hội An)", desc:"숯불 BBQ, 해물파전, 생맥주·막걸리. 올드타운 인기 식당", meta:"12:00~22:00 · 연중무휴", rating:"4.7", tel:"+84935174356", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJB5o7WHwOQjER0Dbq6MuRnqI" },
+    { name:"칠성돈까스", loc:"미케비치 (An Hải)", desc:"왕돈까스, 카츠카레, 매운소고기국밥. 수제 돈까스 맛집", meta:"10:30~15:30, 17:00~20:20 · 토 휴무", rating:"4.5", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJZWNNVN4ZQjERw7zk9_JxGxA" },
+    { name:"달빛포차 (Dalbit)", loc:"박당거리 (Hải Châu)", desc:"한국식 안주, 심야 포차, 한강 야경 조망", meta:"18:00~새벽 04:00 · 심야 영업", rating:"4.9", tel:"+84796510001", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJ3-MkGPUZQjERO3PGQ6woD_U" },
+    { name:"독도 한식당 (Dokdo)", loc:"미케비치 (An Hải)", desc:"뼈해장국, 푸짐한 반찬, 늦은 시간까지 식사 가능", meta:"10:30~새벽 03:00 · 심야", rating:"4.8", tel:"+84949890718", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJocVz55kXQjER2n7UptQDrYg" },
+  ];
+
+  const FOOD = [
+    { name:"란조 (Làn Gió) ★강추", loc:"핑크성당 맞은편 (Hải Châu)", desc:"새우 요리 등 해산물 & 베트남 정식. 직원이 새우를 직접 까줌", meta:"10:30~22:30 · 연중무휴", rating:"4.7", tel:"+84973972074", grab:true, map:"https://www.google.com/maps/place/?q=place_id:ChIJNRSpo9EZQjERliMnRlTXtFc" },
+    { name:"목꽌 씨푸드 (Moc Quan)", loc:"미케비치 (An Hải)", desc:"크랩, 랍스터 등 싱싱한 해산물 직접 지정. 미슐랭 가이드 선정", meta:"10:00~22:00", rating:"4.8", map:"https://www.google.com/maps/place/?q=place_id:ChIJx6-KGnIXQjER7x-T0zeOlBw" },
+    { name:"반쎄오 바지야 (Ba Duong)", loc:"시내 골목 (Hải Châu)", desc:"다낭 대표 반쎄오 맛집. 넴루이(고기꼬치)와 특제 땅콩소스", meta:"09:30~21:00", rating:"4.3", map:"https://www.google.com/maps/place/?q=place_id:ChIJrSiIJ8oZQjERn2-PvhzOCuU" },
+    { name:"포박하이 (Pho Bac Hai)", loc:"한시장 근처 (Hải Châu)", desc:"진하고 담백한 북부식 소고기 쌀국수(퍼보). 가성비 뛰어남", meta:"06:00~21:00", rating:"4.5", tip:"칠리소스 살짝 넣고 마늘초절임 곁들이면 깊은 맛↑", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Pho+Bac+Hai+Da+Nang" },
+    { name:"보네 란흐엉 (Bo Ne Lan Huong)", loc:"시내 (Hải Châu)", desc:"베트남식 철판 스테이크(보네) 전문점. 계란후라이+바게트 조합", meta:"06:00~11:00 (아침 전용)", rating:"4.6", map:"https://www.google.com/maps/search/?api=1&query=Bo+Ne+Lan+Huong+Da+Nang" },
+    { name:"반미 코티엔 (Banh Mi Co Tien)", loc:"시내 (Hải Châu)", desc:"에그치즈반미, 소고기반미. 바삭하고 가성비 좋은 반미집", meta:"06:30~22:00", rating:"4.6", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Banh+Mi+Co+Tien+Da+Nang" },
+    { name:"바반 분맘넴 (Bun Mam Nem)", loc:"시내 (Hải Châu)", desc:"다낭 향토 국수 '분맘넴'(발효 젓갈 비빔국수) 전문점", meta:"07:00~23:00", rating:"4.5", map:"https://www.google.com/maps/search/?api=1&query=Bun+Mam+Nem+Tran+Ke+Xuong+Da+Nang" },
+  ];
+
+  const CAFE = [
+    { name:"콩카페 (Cộng Càphê)", loc:"한강변 및 주요 거리", desc:"시그니처 코코넛 스무디 커피가 대표적인 인기 감성 카페", meta:"07:00~23:00", rating:"4.5", tip:"코코넛 연유 스무디 커피 필수 주문", map:"https://www.google.com/maps/search/?api=1&query=Cong+Caphe+Da+Nang" },
+    { name:"43 팩토리 커피 로스터스", loc:"미케비치 근처 (Ngũ Hành Sơn)", desc:"수중 좌석 인테리어가 돋보이는 모던 프리미엄 드립 스페셜티 카페", meta:"06:30~22:30", rating:"4.6", map:"https://www.google.com/maps/search/?api=1&query=43+Factory+Coffee+Roasters+Da+Nang" },
+    { name:"찐카페 (Trinh Cafe)", loc:"시내 (Hải Châu)", desc:"아보카도 커피, 베트남 전통 에그커피 등 현지 특색 음료 전문", meta:"07:00~22:30", rating:"4.6", map:"https://www.google.com/maps/search/?api=1&query=Trinh+Cafe+Da+Nang" },
+    { name:"더 커피 하우스 (The Coffee House)", loc:"시내 여러 지점", desc:"쾌적하고 에어컨이 잘 갖춰져 있어 여행 중 쉬어가기 좋은 체인 카페", meta:"07:00~22:00", rating:"4.4", map:"https://www.google.com/maps/search/?api=1&query=The+Coffee+House+Da+Nang" },
+  ];
+
+  const SPA = [
+    { name:"허벌 스파 (Herbal Spa)", loc:"미케비치 뒤편 (Sơn Trà)", desc:"허브 주머니와 핫스톤을 활용한 전통 스파. 사전예약 권장", meta:"09:00~22:30", rating:"4.7", tip:"2인 이상 예약 시 시내 픽드랍 서비스 가능 여부 확인", map:"https://www.google.com/maps/search/?api=1&query=Herbal+Spa+Da+Nang" },
+    { name:"바빌론 스파 (Babylon Spa)", loc:"미케비치 도보 5분", desc:"아로마 핫스톤 및 태국식 마사지. 현대적이고 깨끗한 시설", meta:"09:00~23:00", rating:"4.7", map:"https://www.google.com/maps/search/?api=1&query=Babylon+Spa+Da+Nang" },
+    { name:"판다 릴렉스 스파 (Panda)", loc:"미케비치 바로 앞", desc:"해변 근접 위치, 가성비 좋은 아로마 & 발 마사지", meta:"10:00~22:00", rating:"4.6", map:"https://www.google.com/maps/search/?api=1&query=Panda+Relax+Spa+Da+Nang" },
+    { name:"틴틴 스파 (Tin Tin)", loc:"시내 중심 (Hải Châu)", desc:"마지막 날 샤워 및 짐 보관이 가능하여 공항 가기 전 이용에 적합", meta:"10:00~22:00", rating:"4.6", tip:"공항 드랍 서비스 문의 가능", map:"https://www.google.com/maps/search/?api=1&query=Tin+Tin+Spa+Da+Nang" },
+  ];
+
+  const PHRASES = [
+    { g:"기본 인사 & 표현", list:[
+        { ko:"안녕하세요", vi:"Xin chào", pron:"신 짜오" },
+        { ko:"감사합니다", vi:"Cảm ơn", pron:"깜 언" },
+        { ko:"죄송합니다", vi:"Xin lỗi", pron:"신 로이" },
+        { ko:"네 / 아니요", vi:"Vâng / Không", pron:"벙 / 콤" },
+        { ko:"괜찮습니다", vi:"Không sao", pron:"콤 사오" },
+      ]},
+    { g:"식당 & 주문", list:[
+        { ko:"계산해 주세요", vi:"Tính tiền", pron:"띤 띠엔" },
+        { ko:"맛있어요!", vi:"Ngon quá", pron:"응온 꾸아" },
+        { ko:"고수 넣지 마세요 ★", vi:"Không cho rau mùi", pron:"콤 쪼 라우 무이" },
+        { ko:"안 맵게 해주세요", vi:"Không cay", pron:"콤 까이" },
+        { ko:"얼음 빼주세요", vi:"Không đá", pron:"콤 다" },
+        { ko:"물 / 메뉴판 주세요", vi:"Cho tôi nước / thực đơn", pron:"쪼 또이 느억 / 특 던" },
+        { ko:"포장해 주세요", vi:"Cho tôi mang về", pron:"쪼 또이 망 베" },
+      ]},
+    { g:"쇼핑 & 흥정", list:[
+        { ko:"얼마예요?", vi:"Bao nhiêu tiền?", pron:"바오 니에우 띠엔?" },
+        { ko:"너무 비싸요!", vi:"Đắt quá", pron:"닷 꾸아" },
+        { ko:"깎아 주세요", vi:"Giảm giá đi", pron:"쟘 쟈 디" },
+        { ko:"이거 주세요", vi:"Cho tôi cái này", pron:"쪼 또이 까이 나이" },
+        { ko:"안 살게요 / 됐어요", vi:"Không mua", pron:"콤 무아" },
+      ]},
+    { g:"택시 & 이동", list:[
+        { ko:"여기로 가주세요", vi:"Cho tôi đến đây", pron:"쪼 또이 덴 더이" },
+        { ko:"천천히 가주세요", vi:"Đi chậm lại", pron:"디 첨 라이" },
+        { ko:"여기서 세워주세요", vi:"Dừng lại ở đây", pron:"증 라이 어 더우" },
+        { ko:"영수증 주세요", vi:"Cho tôi hóa đơn", pron:"쪼 또이 화 던" },
+      ]},
+    { g:"마사지 & 비상", list:[
+        { ko:"살살 해주세요 (아파요)", vi:"Nhẹ hơn (Đau quá)", pron:"녜 헌 (다우 꾸아)" },
+        { ko:"세게 해주세요", vi:"Mạnh hơn", pron:"만 헌" },
+        { ko:"화장실이 어디예요?", vi:"Nhà vệ sinh ở đâu?", pron:"냐 베 신 어 더우?" },
+        { ko:"도와주세요!", vi:"Giúp tôi với", pron:"쥽 또이 버이" },
+      ]}
+  ];
+
+  const TIPS = [
+    { h:"🛵 이동은 그랩(Grab) 필수", p:"택시보다 안전하고 가격이 정찰제로 표시됨. 공항에서는 지정 픽업 존(P1/P2) 이용.", warn:false },
+    { h:"💵 전통시장 흥정 요령", p:"한시장 등에서는 제시 가격의 50~60% 선부터 불러 흥정 시작. 대형마트나 정찰제 매장은 제외.", warn:false },
+    { h:"👜 소매치기 및 소지품 주의", p:"오토바이 2인조에 의한 소지품 낚아채기 주의. 길거리에서 핸드폰 사용 시 안쪽으로 들어서서 사용.", warn:true },
+    { h:"💳 지갑 및 현금 직접 관리", p:"친절하게 대하며 지갑에서 현금을 꺼내주겠다고 접근하는 호객 행위 주의. 직접 현금 계산.", warn:true },
+    { h:"💧 물갈이 및 위생", p:"마시는 물은 석회 성분 방지를 위해 반드시 생수 구매. 배탈약(정로환, 지사제) 준비 권장.", warn:false },
+    { h:"🏧 TPBank ATM 무료 인출", p:"토스 외화체크카드 사용 시 TPBank ATM에서 수수료 없이 현지 통화 인출 가능.", warn:false },
+  ];
+
+  /* ====== 렌더링 함수 ====== */
+  const TABS = [
+    { id:"check", label:"📋 체크리스트" }, { id:"sights", label:"🏛️ 관광지" },
+    { id:"korean", label:"🍚 한식당" }, { id:"food", label:"🍜 로컬맛집" },
+    { id:"cafe", label:"☕ 카페" }, { id:"spa", label:"💆 마사지" },
+    { id:"calc", label:"💱 환율" }, { id:"phrase", label:"🗣️ 회화" },
+    { id:"tips", label:"💡 꿀팁" }, { id:"emergency", label:"🆘 긴급" },
+  ];
+
+  const tabsEl = document.getElementById("tabs");
+  TABS.forEach((t, i) => {
+    const b = document.createElement("button");
+    b.className = "tab" + (i === 0 ? " active" : "");
+    b.textContent = t.label;
+    b.onclick = () => showTab(t.id, b);
+    tabsEl.appendChild(b);
+  });
+
+  function showTab(id, btn) {
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    document.getElementById("panel-" + id).classList.add("active");
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    btn.classList.add("active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function placeCard(p) {
+    const rating = p.rating ? `<span class="rating">⭐ ${p.rating}</span>` : "";
+    const telLine = p.tel ? `<div class="tel-line">📞 ${p.tel}</div>` : "";
+    const tel = p.tel ? `<a class="btn btn-tel" href="tel:${p.tel}">📞 전화</a>` : "";
+    const grab = p.grab ? `<button class="btn btn-grab" onclick="alert('그랩(Grab) 앱을 실행해 매장명을 검색하세요.')">🛵 Grab 배달 가능</button>` : "";
+    const tip = p.tip ? `<div class="tip">💡 ${p.tip}</div>` : "";
+    return `<div class="card">
       <div class="card-top"><div class="card-name">${p.name}</div>${rating}</div>
       <div class="loc">📍 ${p.loc}</div>
       <div class="desc">${p.desc}</div>
@@ -229,71 +241,72 @@ function placeCard(p) {
       <div class="actions"><a class="btn btn-map" href="${p.map}" target="_blank">🗺️ 지도 열기</a>${tel}</div>
       ${grab ? `<div class="actions">${grab}</div>` : ""}
     </div>`;
-}
-document.getElementById("panel-sights").innerHTML = `<div class="count">관광지·유적지 ${SIGHTS.length}곳</div>` + SIGHTS.map(placeCard).join("");
-document.getElementById("panel-korean").innerHTML = `<div class="count">한식당 ${KOREAN.length}곳</div>` + KOREAN.map(placeCard).join("");
-document.getElementById("panel-food").innerHTML = `<div class="count">로컬·미슐랭 맛집 ${FOOD.length}곳</div>` + FOOD.map(placeCard).join("");
-document.getElementById("panel-cafe").innerHTML = `<div class="count">카페 ${CAFE.length}곳</div>` + CAFE.map(placeCard).join("");
-document.getElementById("panel-spa").innerHTML = `<div class="count">마사지·스파 ${SPA.length}곳</div>` + SPA.map(placeCard).join("");
-document.getElementById("panel-phrase").innerHTML = PHRASES.map(group => `<div class="phrase-group">${group.g}</div>${group.list.map(p => `<div class="phrase"><div class="ko">${p.ko}</div><div class="vi">${p.vi}</div><div class="pron">[${p.pron}]</div></div>`).join("")}`).join("");
-document.getElementById("panel-tips").innerHTML = `<div class="count">여행 꿀팁 ${TIPS.length}개</div>` + TIPS.map(t => `<div class="tipcard"><h3>${t.h}</h3><p class="${t.warn ? 'warn' : ''}">${t.p}</p></div>`).join("");
+  }
 
-document.getElementById("panel-check").innerHTML = `
+  document.getElementById("panel-sights").innerHTML = `<div class="count">관광지·유적지 ${SIGHTS.length}곳</div>` + SIGHTS.map(placeCard).join("");
+  document.getElementById("panel-korean").innerHTML = `<div class="count">한식당 ${KOREAN.length}곳</div>` + KOREAN.map(placeCard).join("");
+  document.getElementById("panel-food").innerHTML = `<div class="count">로컬·미슐랭 맛집 ${FOOD.length}곳</div>` + FOOD.map(placeCard).join("");
+  document.getElementById("panel-cafe").innerHTML = `<div class="count">카페 ${CAFE.length}곳</div>` + CAFE.map(placeCard).join("");
+  document.getElementById("panel-spa").innerHTML = `<div class="count">마사지·스파 ${SPA.length}곳</div>` + SPA.map(placeCard).join("");
+  document.getElementById("panel-phrase").innerHTML = PHRASES.map(group => `<div class="phrase-group">${group.g}</div>${group.list.map(p => `<div class="phrase"><div class="ko">${p.ko}</div><div class="vi">${p.vi}</div><div class="pron">[${p.pron}]</div></div>`).join("")}`).join("");
+  document.getElementById("panel-tips").innerHTML = `<div class="count">여행 꿀팁 ${TIPS.length}개</div>` + TIPS.map(t => `<div class="tipcard"><h3>${t.h}</h3><p class="${t.warn ? 'warn' : ''}">${t.p}</p></div>`).join("");
+
+  document.getElementById("panel-check").innerHTML = `
   <div class="check-section"><h2>📱 데이터 (유심/이심/로밍)</h2>
     <div class="check-item"><h3>추천: 이심 or 실물 유심</h3>
-      <p>5일 무제한 약 <span class="hi">8,000원</span>. 갤럭시 S23 미만이면 <b>실물 유심 사전 구매</b> 필요 (말톡 비나폰/모비폰 5일 무제한 추천). 로밍은 2.9만원~으로 비쌈.</p></div>
+      <p>5일 무제한 약 <span class="hi">8,000원</span>. 갤럭시 S23 미만 단말기는 <b>실물 유심 사전 구매</b> 추천 (말톡 베트남 요금제 비나폰/모비폰 무제한).</p></div>
   </div>
   <div class="check-section"><h2>🚗 교통 · 공항 주차 (4박5일)</h2>
     <div class="check-item"><h3>공항버스</h3><p>출발 17일(목) 예매 시작. 심야우등 02:15 13,300원 / 일반 04:20~05:00 11,000원</p></div>
-    <div class="check-item"><h3>자차 (쏘렌토 하이브리드)</h3><p>장기주차 45,000원 → 하이브리드 50% 감면 <span class="hi">22,500원</span>. 공식 예약 만차 시 당일 현장 진입. 사설대행은 감면 없음+발레비 2만원. <b>출발 당일 실시간 잔여석 체크 필수</b></p></div>
+    <div class="check-item"><h3>자차 (쏘렌토 하이브리드)</h3><p>장기주차 45,000원 → 하이브리드 50% 감면 <span class="hi">22,500원</span>. 당일 실시간 잔여석 확인 필수.</p></div>
   </div>
   <div class="check-section"><h2>💳 결제 · 환전</h2>
-    <div class="check-item"><h3>토스뱅크 외화체크카드</h3><p>해외 수수료 무료, 원화통장에서 100% 우대 자동환전. 카드결제는 이걸로.</p></div>
-    <div class="check-item"><h3>현금 인출</h3><p>야시장·로컬식당·소형상점은 현금만. 시내 <b>TPBank ATM</b>에서 토스카드로 인출 시 수수료 완전 무료.</p></div>
+    <div class="check-item"><h3>토스뱅크 외화체크카드</h3><p>해외 수수료 무료, 원화통장에서 100% 우대 자동환전.</p></div>
+    <div class="check-item"><h3>현금 인출</h3><p>시내 <b>TPBank ATM</b>에서 토스카드로 인출 시 수수료 무료.</p></div>
   </div>
-  <div class="check-section"><h2>✅ 출국 전 필수</h2>
-    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>그랩(Grab) 앱 사전 연동 ★</h3><p>현지 가입·카드등록 에러 잦음. 한국에서 미리 설치 + 토스카드 등록</p></div></div></div>
-    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>샤워기 필터</h3><p>리조트도 수질 아쉬움. 다이소 여행용 샤워헤드+여분필터 2~3개</p></div></div></div>
-    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>비상 상비약 (배탈약 필수)</h3><p>지사제·소화제 + 정로환 등 배탈약</p></div></div></div>
-    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>필수 앱: 구글맵 · 파파고 · 그랩</h3><p>파파고 베트남어 오프라인 번역팩 다운로드 필수</p></div></div></div>
-    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>여권 유효기간 확인</h3><p>45일 무비자. 단 출발일 기준 <b>6개월 이상</b> 남아야 입국 가능</p></div></div></div>
-    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>구글맵 오프라인 지도 다운로드</h3><p>다낭·호이안 지역 미리 받아두면 인터넷 없이도 길찾기</p></div></div></div>
-    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>여행자 보험 가입</h3><p>오토바이 렌트 사고는 미적용 사례 있음. 약관 확인</p></div></div></div>
+  <div class="check-section"><h2>✅ 출국 전 필수 체크</h2>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>그랩(Grab) 앱 사전 연동 ★</h3><p>한국에서 미리 설치 및 카드 등록 필수</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>샤워기 필터 준비</h3><p>다이소 여행용 샤워헤드 + 여분 필터 2~3개</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>비상 상비약</h3><p>지사제·소화제 + 배탈약(정로환 등)</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>여권 유효기간 확인</h3><p>출발일 기준 <b>6개월 이상</b> 남았는지 체크</p></div></div></div>
   </div>
 `;
 
-document.getElementById("panel-calc").innerHTML = `
+  /* 환율 패널 */
+  document.getElementById("panel-calc").innerHTML = `
   <div class="calc">
     <div class="calc-row"><label>동 (VND)</label><input type="number" id="vnd" inputmode="numeric" placeholder="0"><span>동</span></div>
     <div class="calc-row"><label>원 (KRW)</label><input type="number" id="krw" inputmode="numeric" placeholder="0"><span>원</span></div>
-    <div class="calc-note">환율 기준: 1,000동 ≈ 55원 (변동 가능)</div>
+    <div class="calc-note">환율 기준: 1,000동 ≈ 55원 (약 계산)</div>
     <div class="calc-quick">
-      <button onclick="setVnd(10000)">1만동</button><button onclick="setVnd(50000)">5만동</button>
-      <button onclick="setVnd(100000)">10만동</button><button onclick="setVnd(500000)">50만동</button>
+      <button onclick="setVnd(10000)">1만동</button>
+      <button onclick="setVnd(50000)">5만동</button>
+      <button onclick="setVnd(100000)">10만동</button>
+      <button onclick="setVnd(500000)">50만동</button>
     </div>
   </div>
-  <p class="calc-note" style="margin-top:14px; line-height:1.7;">💡 팁: 베트남 지폐는 0이 많아요.<br><b>동에서 뒤 세자리(000) 떼고 × 55</b> 하면 대략 원화예요.<br>예) 50,000동 → 50 × 55 = 약 2,750원</p>
+  <p class="calc-note" style="margin-top:14px; line-height:1.7;">💡 팁: 베트남 지폐는 0이 많습니다.<br><b>동에서 뒤 세자리(000) 떼고 × 55</b> 하면 원화 가격입니다.<br>예) 50,000동 → 50 × 55 = 약 2,750원</p>
 `;
-const RATE = 55 / 1000;
-const vndEl = document.getElementById("vnd"), krwEl = document.getElementById("krw");
-vndEl.addEventListener("input", () => { const v = parseFloat(vndEl.value) || 0; krwEl.value = v ? Math.round(v * RATE) : ""; });
-krwEl.addEventListener("input", () => { const k = parseFloat(krwEl.value) || 0; vndEl.value = k ? Math.round(k / RATE) : ""; });
-function setVnd(v) { vndEl.value = v; krwEl.value = Math.round(v * RATE); }
 
-document.getElementById("panel-emergency").innerHTML = `
+  const RATE = 55 / 1000;
+  const vndEl = document.getElementById("vnd"), krwEl = document.getElementById("krw");
+  vndEl.addEventListener("input", () => { const v = parseFloat(vndEl.value) || 0; krwEl.value = v ? Math.round(v * RATE) : ""; });
+  krwEl.addEventListener("input", () => { const k = parseFloat(krwEl.value) || 0; vndEl.value = k ? Math.round(k / RATE) : ""; });
+  function setVnd(v) { vndEl.value = v; krwEl.value = Math.round(v * RATE); }
+
+  /* 긴급 패널 */
+  document.getElementById("panel-emergency").innerHTML = `
   <div class="section-label">🆘 긴급 전화 (베트남)</div>
   <div class="emergency"><h3>경찰</h3><a href="tel:113">📞 113</a></div>
   <div class="emergency"><h3>소방</h3><a href="tel:114">📞 114</a></div>
   <div class="emergency"><h3>응급차 (앰뷸런스)</h3><a href="tel:115">📞 115</a></div>
   <div class="section-label">🇰🇷 한국 영사 (여권 분실·사건사고)</div>
-  <div class="emergency"><h3>주베트남 대한민국 대사관 영사콜센터</h3><a href="tel:+84240774888">📞 +84 24 0774 8888</a><p>24시간 영사 조력. 여권 분실, 사건·사고 시</p></div>
-  <div class="emergency"><h3>외교부 영사콜센터 (서울, 24시간)</h3><a href="tel:+82232100404">📞 +82 2 3210 0404</a><p>해외에서 사고 시 한국어 상담</p></div>
-  <div class="emergency"><h3>패밀리 메디컬 프랙티스 다낭</h3><p>한국어 가능 병원. 가벼운 증상은 숙소 프런트에 먼저 문의</p></div>
-  <div class="section-label">📌 기억할 것</div>
-  <div class="emergency"><p style="color:var(--ink);">• 여권 사본·비상연락처 따로 보관<br>• 그랩 이용 시 차량 번호판 확인 후 탑승<br>• 여행자 보험 가입자는 병원 전 보험사에 먼저 연락<br>• 밤에는 귀중품 최소화</p></div>
+  <div class="emergency"><h3>주다낭 대한민국 총영사관</h3><a href="tel:+842363566100">📞 +84 236 356 6100</a><p>주간 운영 및 긴급전화 안내</p></div>
+  <div class="emergency"><h3>외교부 영사콜센터 (서울, 24시간)</h3><a href="tel:+82232100404">📞 +82 2 3210 0404</a></div>
+  <div class="emergency"><h3>패밀리 메디컬 프랙티스 다낭</h3><p>한국어 진료 가능한 국제병원</p></div>
 `;
 
-document.getElementById("panel-check").classList.add("active");
+  document.getElementById("panel-check").classList.add("active");
 </script>
 </body>
 </html>
