@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>다낭 여행 가이드 (통합 완충본)</title>
+  <title>다낭 여행 가이드</title>
   <style>
     :root {
       --sea: #0e7c86; --sea-deep: #0a5a62; --lantern: #f0913e;
@@ -44,6 +44,16 @@
     .btn-tel { background: var(--ok); color: #fff; }
     .btn-grab { background: #fff; color: var(--sea); border: 1.5px solid var(--sea); font-size: 12px; width: 100%; margin-top: 4px; }
 
+    /* 일정 */
+    .iti-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+    .iti-tab { flex: 1; padding: 9px 4px; border: 1px solid var(--line); background: var(--card); border-radius: 8px; font-size: 12.5px; font-weight: 700; color: var(--dim); cursor: pointer; text-align: center; }
+    .iti-tab.active { background: var(--sea); color: #fff; border-color: var(--sea); }
+    .iti-head { font-size: 13px; color: var(--dim); margin-bottom: 6px; text-align: center; }
+    .iti-head b { color: var(--sea-deep); font-size: 14px; }
+    .iti-row { display: flex; gap: 12px; padding: 11px 4px; border-bottom: 1px dashed var(--line); }
+    .iti-time { flex: 0 0 52px; font-size: 13px; font-weight: 700; color: var(--sea); }
+    .iti-desc { font-size: 14px; color: var(--ink); }
+
     /* 체크리스트 */
     .check-section { margin-bottom: 20px; }
     .check-section h2 { font-size: 15.5px; color: var(--sea-deep); font-weight: 700; padding-bottom: 6px; border-bottom: 2px solid var(--line); margin-bottom: 10px; }
@@ -51,11 +61,13 @@
     .check-item h3 { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
     .check-item p { font-size: 13px; color: var(--dim); }
     .check-item .hi { color: var(--lantern); font-weight: 700; }
+    .check-item .danger { color: #c0392b; font-weight: 700; }
     .check-box { display: flex; align-items: flex-start; gap: 10px; }
     .check-box input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--sea); flex: 0 0 auto; }
 
     /* 환율 계산기 */
     .calc { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; width: 100%; box-sizing: border-box; }
+    .rate-status { font-size: 12.5px; font-weight: 600; text-align: center; padding: 8px; border-radius: 8px; background: #f2efe9; color: var(--sea-deep); margin-bottom: 14px; transition: background 0.2s; }
     .calc-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; width: 100%; }
     .calc-row label { font-size: 13.5px; font-weight: 600; flex: 0 0 65px; white-space: nowrap; }
     .calc-row input { flex: 1; min-width: 0; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 16px; font-weight: 600; text-align: right; color: var(--ink); width: 100%; box-sizing: border-box; }
@@ -87,10 +99,11 @@
 <body>
 <header>
   <h1>🏖️ 다낭 여행 가이드</h1>
-  <p>탭을 눌러 관광지·맛집·정보를 확인하세요</p>
+  <p>탭을 눌러 일정·관광지·맛집·정보를 확인하세요</p>
   <div class="tabs" id="tabs"></div>
 </header>
 <main>
+  <div class="panel" id="panel-iti"></div>
   <div class="panel" id="panel-check"></div>
   <div class="panel" id="panel-sights"></div>
   <div class="panel" id="panel-korean"></div>
@@ -103,9 +116,63 @@
   <div class="panel" id="panel-emergency"></div>
 </main>
 <script>
-  /* ====== 전체 데이터 (중복 제거 & 누락본 완벽 추가) ====== */
+  /* ====== 일정 데이터 (사진 기준) ====== */
+  const ITINERARY = [
+    { day:"DAY 1", date:"10/1 (목)", place:"다낭", rows:[
+        { t:"07:00", d:"비행기 출발" },
+        { t:"11:00", d:"입국심사 후 호텔 이동" },
+        { t:"12:00", d:"점심 · 란조" },
+        { t:"13:00", d:"핑크성당" },
+        { t:"14:00", d:"한시장" },
+        { t:"15:00", d:"롯데마트" },
+        { t:"16:00", d:"호텔 체크인" },
+        { t:"18:00", d:"저녁 · 목식당" },
+        { t:"19:00", d:"선짜야시장" },
+        { t:"21:00", d:"호텔" },
+      ]},
+    { day:"DAY 2", date:"10/2 (금)", place:"다낭 (바나힐)", rows:[
+        { t:"07:00", d:"조식 · 바나힐 출발(7:15)" },
+        { t:"09:00", d:"바나힐" },
+        { t:"10:00", d:"골든브릿지 · 알파인코스터" },
+        { t:"11:00", d:"점심" },
+        { t:"12:00", d:"프랑스마을" },
+        { t:"13:00", d:"비어 플라자" },
+        { t:"15:00", d:"마사지 · 응우온 스파" },
+        { t:"16:00", d:"미케비치" },
+        { t:"18:00", d:"저녁 한식당 · 가인" },
+        { t:"20:00", d:"비치바" },
+        { t:"21:00", d:"호텔" },
+      ]},
+    { day:"DAY 3", date:"10/3 (토)", place:"호이안", rows:[
+        { t:"08:00", d:"조식" },
+        { t:"09:00", d:"영흥사 (해수관음상)" },
+        { t:"10:00", d:"점심 · 피자포피스" },
+        { t:"11:00", d:"콩카페" },
+        { t:"13:00", d:"호이안" },
+        { t:"14:00", d:"바구니배" },
+        { t:"15:00", d:"올드타운" },
+        { t:"16:00", d:"우베베 (망고빙수) · 저녁-안토이" },
+        { t:"17:00", d:"소원배" },
+        { t:"18:00", d:"야시장" },
+        { t:"20:00", d:"마사지 · 모링가스파" },
+        { t:"21:00", d:"호텔" },
+      ]},
+    { day:"DAY 4", date:"10/4 (일)", place:"다낭", rows:[
+        { t:"08:00", d:"조식" },
+        { t:"09:00", d:"선택 (오행산 or 자유시간)" },
+        { t:"12:00", d:"체크아웃 (bss)" },
+        { t:"13:00", d:"점심 · 벱꾸온" },
+        { t:"15:00", d:"서울 이발관" },
+        { t:"16:00", d:"카페" },
+        { t:"18:00", d:"저녁" },
+        { t:"20:00", d:"유람선 (용머리 불쇼)" },
+        { t:"21:00", d:"공항으로 이동" },
+      ]},
+  ];
+
+  /* ====== 관광/맛집 데이터 ====== */
   const SIGHTS = [
-    { name:"바나힐 & 골든브릿지", loc:"서부 (Hòa Vang)", desc:"거대한 손이 받치는 다리, 세계 최장 케이블카(20분), 유럽풍 테마파크. 다낭 필수 코스 1순위", meta:"자유이용권 · 아침 일찍 권장", tip:"산 정상은 시내보다 5~8℃ 낮음. 얇은 겉옷·편한 운동화 필수. Klook·KKday 사전예매 추천", map:"https://www.google.com/maps/search/?api=1&query=Ba%20Na%20Hills%20Da%20Nang&hl=ko" },
+    { name:"바나힐 & 골든브릿지", loc:"서부 (Hòa Vang)", desc:"거대한 손이 받치는 다리, 세계 최장 케이블카(20분), 유럽풍 테마파크. 다낭 필수 코스 1순위", meta:"자유이용권 · 아침 일찍 권장", tip:"산 정상은 시내보다 5~8℃ 낮음. 얇은 겉옷·편한 운동화 필수. Klook·KKday 사전예매 추천", map:"https://www.google.co.kr/maps/place/Golden+Bridge/@15.9949426,107.9939876,17z/data=!3m1!4b1!4m6!3m5!1s0x3141f73d19c5d38f:0x63766c11470ab50d!8m2!3d15.9949375!4d107.9965625!16s%2Fg%2F11f7r5z2l1?entry=ttu&g_ep=EgoyMDI2MDkxMy4wIKXMDSoASAFQAw%3D%3D" },
     { name:"호이안 고대도시", loc:"남부 (Hội An)", desc:"유네스코 세계문화유산. 등불 거리와 올드타운. 밤에 등불 켜지면 야경이 뛰어남", meta:"구역별 티켓 · 저녁 추천", tip:"낮보다 해질녘~밤이 훨씬 예쁨. 소원등 띄우기 및 야시장 추천", map:"https://www.google.com/maps/search/?api=1&query=Hoi%20An%20Ancient%20Town&hl=ko" },
     { name:"선짜 야시장 (Son Tra Night Market)", loc:"용다리 동편 (Sơn Trà)", desc:"해산물 구이, 기념품, 길거리 음식을 즐길 수 있는 야시장", meta:"18:00~23:00 · 입장료 무료", tip:"용다리 불쇼(주말 21시) 본 후 도보로 이동하기 좋음", map:"https://www.google.com/maps/search/?api=1&query=Son%20Tra%20Night%20Market%20Da%20Nang&hl=ko" },
     { name:"오행산 (마블마운틴)", loc:"남부 (Ngũ Hành Sơn)", desc:"석회암 동굴 사원과 전망대. 계단이 많아 산책 겸 관광하기 좋음", meta:"약 4만동 · 07:00~17:30", tip:"편한 신발 필수. 엘리베이터(유료) 탑승 추천", map:"https://www.google.com/maps/search/?api=1&query=Marble%20Mountains%20Da%20Nang&hl=ko" },
@@ -142,6 +209,7 @@
 
   const FOOD = [
     { name:"란조 (Làn Gió) ★지인 추천", loc:"핑크성당 맞은편 (Hải Châu)", desc:"새우 요리 등 해산물 & 베트남 정식. 직원이 새우를 직접 까줌", meta:"10:30~22:30 · 연중무휴", rating:"4.7", tel:"+84973972074", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Lan%20Gio%20Da%20Nang&hl=ko" },
+    { name:"마담란 (Madame Lân) ★지인 추천", loc:"한강변 박당거리 (Hải Châu)", desc:"노란 콜로니얼풍 대형 식당. 반쎄오·분짜·짜조·해산물 등 베트남 요리 종류가 아주 많아 여럿이 골라 먹기 좋음. 강변 위치라 분위기도 좋음", meta:"강변 대형 매장 · 단체 방문 무난", grab:false, map:"https://www.google.com/maps/search/?api=1&query=Madame%20Lan%20Da%20Nang&hl=ko" },
     { name:"목꽌 씨푸드 (Moc Quan)", loc:"미케비치 (An Hải)", desc:"크랩, 랍스터 등 싱싱한 해산물 직접 지정. 미슐랭 가이드 선정", meta:"10:00~22:00", rating:"4.8", grab:false, map:"https://www.google.com/maps/search/?api=1&query=Moc%20Quan%20Da%20Nang&hl=ko" },
     { name:"반쎄오 바지야 (Ba Duong)", loc:"시내 골목 (Hải Châu)", desc:"다낭 대표 미슐랭 반쎄오 맛집. 넴루이(고기꼬치)와 특제 땅콩소스", meta:"09:30~21:00 · 화요일 휴무", rating:"4.3", grab:false, map:"https://www.google.com/maps/search/?api=1&query=Banh%20Xeo%20Ba%20Duong%20Da%20Nang&hl=ko" },
     { name:"미꽝 꼬사우 (Co Sau)", loc:"미케비치 (An Hải)", desc:"다낭 대표 비빔 면요리 미꽝 전문점. 미슐랭 셀렉트", meta:"06:00~21:00", rating:"4.5", grab:true, map:"https://www.google.com/maps/search/?api=1&query=Mi%20Quang%20Ba%20Mua%20Da%20Nang&hl=ko" },
@@ -194,7 +262,7 @@
     { g:"택시 & 이동", list:[
         { ko:"여기로 가주세요", vi:"Cho tôi đến đây", pron:"쪼 또이 덴 더이" },
         { ko:"천천히 가주세요", vi:"Đi chậm lại", pron:"디 첨 라이" },
-        { ko:"여기서 세워주세요", vi:"Dừng lại ở đây", pron:"증 라이 어 더우" },
+        { ko:"여기서 세워주세요", vi:"Dừng lại ở đây", pron:"증 라이 어 더이" },
         { ko:"영수증 주세요", vi:"Cho tôi hóa đơn", pron:"쪼 또이 화 던" },
       ]},
     { g:"마사지 & 비상", list:[
@@ -214,13 +282,14 @@
     { h:"🏧 TPBank ATM 무료 인출", p:"토스 외화체크카드 사용 시 TPBank ATM에서 수수료 없이 현지 통화 인출 가능.", warn:false },
   ];
 
-  /* ====== UI 렌더링 함수 ====== */
+  /* ====== 탭 ====== */
   const TABS = [
-    { id:"check", label:"📋 체크리스트" }, { id:"sights", label:"🏛️ 관광지" },
-    { id:"korean", label:"🍚 한식당" }, { id:"food", label:"🍜 로컬맛집" },
-    { id:"cafe", label:"☕ 카페" }, { id:"spa", label:"💆 마사지" },
-    { id:"calc", label:"💱 환율" }, { id:"phrase", label:"🗣️ 회화" },
-    { id:"tips", label:"💡 꿀팁" }, { id:"emergency", label:"🆘 긴급" },
+    { id:"iti", label:"📅 일정" }, { id:"check", label:"📋 체크리스트" },
+    { id:"sights", label:"🏛️ 관광지" }, { id:"korean", label:"🍚 한식당" },
+    { id:"food", label:"🍜 로컬맛집" }, { id:"cafe", label:"☕ 카페" },
+    { id:"spa", label:"💆 마사지" }, { id:"calc", label:"💱 환율" },
+    { id:"phrase", label:"🗣️ 회화" }, { id:"tips", label:"💡 꿀팁" },
+    { id:"emergency", label:"🆘 긴급" },
   ];
 
   const tabsEl = document.getElementById("tabs");
@@ -257,7 +326,29 @@
     </div>`;
   }
 
-  /* 각 패널 바인딩 */
+  /* ====== 일정 렌더링 (DAY 서브탭) ====== */
+  document.getElementById("panel-iti").innerHTML = `
+    <div class="count">여행 일정 · DAY 1–4 (날씨에 따라 변경될 수 있음)</div>
+    <div class="iti-tabs" id="iti-tabs"></div>
+    <div id="iti-body"></div>
+  `;
+  const itiTabsEl = document.getElementById("iti-tabs");
+  ITINERARY.forEach((d, i) => {
+    const b = document.createElement("button");
+    b.className = "iti-tab" + (i === 0 ? " active" : "");
+    b.textContent = d.day;
+    b.onclick = () => renderItiDay(i);
+    itiTabsEl.appendChild(b);
+  });
+  function renderItiDay(i) {
+    const day = ITINERARY[i];
+    const rows = day.rows.map(r => `<div class="iti-row"><div class="iti-time">${r.t}</div><div class="iti-desc">${r.d}</div></div>`).join("");
+    document.getElementById("iti-body").innerHTML = `<div class="iti-head">📍 <b>${day.place}</b> · ${day.date}</div>` + rows;
+    document.querySelectorAll(".iti-tab").forEach((b, idx) => b.classList.toggle("active", idx === i));
+  }
+  renderItiDay(0);
+
+  /* 관광/맛집 패널 바인딩 */
   document.getElementById("panel-sights").innerHTML = `<div class="count">관광지·유적지 ${SIGHTS.length}곳</div>` + SIGHTS.map(placeCard).join("");
   document.getElementById("panel-korean").innerHTML = `<div class="count">한식당 ${KOREAN.length}곳</div>` + KOREAN.map(placeCard).join("");
   document.getElementById("panel-food").innerHTML = `<div class="count">로컬·미슐랭 맛집 ${FOOD.length}곳</div>` + FOOD.map(placeCard).join("");
@@ -266,33 +357,51 @@
   document.getElementById("panel-phrase").innerHTML = PHRASES.map(group => `<div class="phrase-group">${group.g}</div>${group.list.map(p => `<div class="phrase"><div class="ko">${p.ko}</div><div class="vi">${p.vi}</div><div class="pron">[${p.pron}]</div></div>`).join("")}`).join("");
   document.getElementById("panel-tips").innerHTML = `<div class="count">여행 꿀팁 ${TIPS.length}개</div>` + TIPS.map(t => `<div class="tipcard"><h3>${t.h}</h3><p class="${t.warn ? 'warn' : ''}">${t.p}</p></div>`).join("");
 
+  /* ====== 체크리스트 ====== */
   document.getElementById("panel-check").innerHTML = `
-  <div class="check-section"><h2>📱 데이터 (유심/이심/로밍)</h2>
-    <div class="check-item"><h3>추천: 이심 or 실물 유심</h3>
-      <p>5일 무제한 약 <span class="hi">8,000원</span>. 갤럭시 S23 미만 단말기는 <b>실물 유심 사전 구매</b> 추천 (말톡 베트남 요금제 비나폰/모비폰 무제한).</p></div>
+  <div class="check-section"><h2>🛂 출국 전 서류</h2>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>여권 유효기간 6개월 이상</h3><p>입국일 기준 <b>6개월 이상</b> + 빈 페이지 2장 이상</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>무비자 45일 (비자 준비 불필요)</h3><p>한국 여권 + 왕복 항공권이면 <span class="hi">45일까지 무비자</span>. 별도 비자 신청 필요 없음</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>항공권·숙소 바우처 저장 ★</h3><p>e-티켓·호텔 바우처를 <b>캡처해서 오프라인</b>으로 보관 (입국심사·체크인용)</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>여행자보험 가입</h3><p>병원비·휴대품 분실 대비. 출발 전 가입</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>그랩(Grab) 앱 설치 + 카드 등록 ★</h3><p>한국에서 미리 설치하고 해외결제 되는 카드 등록</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>지도·번역앱 오프라인 준비</h3><p>구글맵 오프라인 지도 다운로드 + 파파고/구글번역 언어팩</p></div></div></div>
   </div>
-  <div class="check-section"><h2>🚗 교통 · 공항 주차 (4박5일)</h2>
-    <div class="check-item"><h3>공항버스</h3><p>출발 17일(목) 예매 시작. 심야우등 02:15 13,300원 / 일반 04:20~05:00 11,000원</p></div>
-    <div class="check-item"><h3>자차 (쏘렌토 하이브리드)</h3><p>장기주차 45,000원 → 하이브리드 50% 감면 <span class="hi">22,500원</span>. 당일 실시간 잔여석 확인 필수.</p></div>
+
+  <div class="check-section"><h2>🧳 위탁수하물 (부치는 짐)</h2>
+    <div class="check-item"><h3>항공사 수하물 규정 확인</h3><p>LCC(저가항공)는 보통 <b>수하물 별도 구매</b>. 미리 살수록 저렴</p></div>
+    <div class="check-item"><h3>액체류는 부치는 짐으로</h3><p>선크림·화장품·큰 로션 등 100ml 초과 액체는 위탁수하물에</p></div>
+    <div class="check-item"><h3>보조배터리·라이터는 위탁 불가</h3><p class="danger">보조배터리·라이터는 부치면 안 됨 → 무조건 기내</p></div>
+    <div class="check-item"><h3>캐리어 무게 미리 재기</h3><p>초과 요금 방지. 돌아올 때 쇼핑 무게까지 고려해 여유 있게</p></div>
   </div>
-  <div class="check-section"><h2>💳 결제 · 환전</h2>
-    <div class="check-item"><h3>토스뱅크 외화체크카드</h3><p>해외 수수료 무료, 원화통장에서 100% 우대 자동환전.</p></div>
-    <div class="check-item"><h3>현금 인출</h3><p>시내 <b>TPBank ATM</b>에서 토스카드로 인출 시 수수료 무료.</p></div>
+
+  <div class="check-section"><h2>🎒 기내 반입 (들고 타는 짐)</h2>
+    <div class="check-item"><h3>액체는 100ml 이하만</h3><p>개별 100ml 이하 용기를 투명 지퍼백(1L)에 모아서</p></div>
+    <div class="check-item"><h3>보조배터리 기내 휴대</h3><p>100Wh(약 2만mAh) 이하 권장. 기내 반입만 가능</p></div>
+    <div class="check-item"><h3>귀중품은 기내에</h3><p>여권·현금·카드·전자기기은 손가방에</p></div>
+    <div class="check-item"><h3>충전기·어댑터·여벌 옷</h3><p>충전 케이블, 멀티어댑터, 갈아입을 옷 한 벌 정도</p></div>
   </div>
-  <div class="check-section"><h2>✅ 출국 전 필수 체크</h2>
-    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>그랩(Grab) 앱 사전 연동 ★</h3><p>한국에서 미리 설치 및 카드 등록 필수</p></div></div></div>
-    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>샤워기 필터 준비</h3><p>다이소 여행용 샤워헤드 + 여분 필터 2~3개</p></div></div></div>
-    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>비상 상비약</h3><p>지사제·소화제 + 배탈약(정로환 등)</p></div></div></div>
-    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>여권 유효기간 확인</h3><p>출발일 기준 <b>6개월 이상</b> 남았는지 체크</p></div></div></div>
+
+  <div class="check-section"><h2>🏖️ 다낭 준비물</h2>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>여름옷 + 얇은 겉옷</h3><p>바나힐 정상은 시내보다 <span class="hi">5~8℃ 낮음</span> → 얇은 겉옷 챙기기</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>수영복·비치웨어·아쿠아슈즈</h3><p>해변·수영장·오행산 계단용</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>선크림·모자·선글라스</h3><p>자외선 강함. 선크림은 부치는 짐으로</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>우산 또는 우비</h3><p>스콜·우기 대비 (특히 9~12월 비 잦음)</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>모기기피제 + 물린 데 바르는 약</h3><p>해변·강변 저녁 시간대 필수</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>비상 상비약</h3><p>지사제·소화제·감기약·해열제·밴드 + 배탈약(정로환 등)</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>샤워기 필터</h3><p>다이소 여행용 샤워헤드 + 여분 필터 2~3개 (석회수 대비)</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>멀티어댑터</h3><p>베트남 220V. 한국 플러그도 대부분 꽂히지만 여유분 있으면 안심</p></div></div></div>
+    <div class="check-item"><div class="check-box"><input type="checkbox"><div><h3>물티슈·손소독제·지퍼백</h3><p>길거리 음식·해변에서 유용</p></div></div></div>
   </div>
 `;
 
-  /* 환율 계산기 */
+  /* ====== 환율 계산기 (실시간 + 오프라인 폴백) ====== */
   document.getElementById("panel-calc").innerHTML = `
   <div class="calc">
+    <div id="rate-status" class="rate-status">환율 불러오는 중…</div>
     <div class="calc-row"><label>동 (VND)</label><input type="number" id="vnd" inputmode="numeric" placeholder="0"><span>동</span></div>
     <div class="calc-row"><label>원 (KRW)</label><input type="number" id="krw" inputmode="numeric" placeholder="0"><span>원</span></div>
-    <div class="calc-note">환율 기준: 1,000동 ≈ 55원 (약 계산)</div>
+    <div class="calc-note">환율 기준: 1,000동 ≈ <b id="rate-per1000">52</b>원</div>
     <div class="calc-quick">
       <button onclick="setVnd(10000)">1만동</button>
       <button onclick="setVnd(50000)">5만동</button>
@@ -300,14 +409,56 @@
       <button onclick="setVnd(500000)">50만동</button>
     </div>
   </div>
-  <p class="calc-note" style="margin-top:14px; line-height:1.7;">💡 팁: 베트남 지폐는 0이 많습니다.<br><b>동에서 뒤 세자리(000) 떼고 × 55</b> 하면 원화 가격입니다.<br>예) 50,000동 → 50 × 55 = 약 2,750원</p>
+  <p class="calc-note" style="margin-top:14px; line-height:1.7;">💡 팁: 베트남 지폐는 0이 많습니다.<br><b>동에서 뒤 세자리(000) 떼고 × <span id="rate-tip-mult">52</span></b> 하면 대략 원화입니다.</p>
 `;
 
-  const RATE = 55 / 1000;
+  let RATE = 52 / 1000;              // 인터넷 안 될 때 기본값 (1,000동 ≈ 52원)
+  let rateSource = "default";
   const vndEl = document.getElementById("vnd"), krwEl = document.getElementById("krw");
-  vndEl.addEventListener("input", () => { const v = parseFloat(vndEl.value) || 0; krwEl.value = v ? Math.round(v * RATE) : ""; });
-  krwEl.addEventListener("input", () => { const k = parseFloat(krwEl.value) || 0; vndEl.value = k ? Math.round(k / RATE) : ""; });
+  const statusEl = document.getElementById("rate-status");
+
+  function recalcVnd() { const v = parseFloat(vndEl.value) || 0; krwEl.value = v ? Math.round(v * RATE) : ""; }
+  function recalcKrw() { const k = parseFloat(krwEl.value) || 0; vndEl.value = k ? Math.round(k / RATE) : ""; }
+  vndEl.addEventListener("input", recalcVnd);
+  krwEl.addEventListener("input", recalcKrw);
   function setVnd(v) { vndEl.value = v; krwEl.value = Math.round(v * RATE); }
+
+  function paintRate(source, date) {
+    rateSource = source;
+    const per = Math.round(RATE * 1000);
+    const p1 = document.getElementById("rate-per1000"); if (p1) p1.textContent = per;
+    const p2 = document.getElementById("rate-tip-mult"); if (p2) p2.textContent = per;
+    if (statusEl) {
+      if (source === "live")       { statusEl.textContent = "🟢 실시간 환율 · " + date + " 기준"; statusEl.style.background = "#eaf7ee"; statusEl.style.color = "#2e7d46"; }
+      else if (source === "cache") { statusEl.textContent = "🟡 오프라인 · 최근 저장값 (" + date + ")"; statusEl.style.background = "#fff7e6"; statusEl.style.color = "#b26a00"; }
+      else                         { statusEl.textContent = "⚪ 기본값(대략) · 인터넷 연결 시 자동 갱신"; statusEl.style.background = "#f2efe9"; statusEl.style.color = "#6b7684"; }
+    }
+    if (vndEl.value) recalcVnd(); else if (krwEl.value) recalcKrw();
+  }
+
+  // 1) 저장된 최근 환율 먼저 적용
+  try {
+    const cached = JSON.parse(localStorage.getItem("vnd_krw_rate") || "null");
+    if (cached && cached.rate) { RATE = cached.rate; paintRate("cache", cached.date); }
+    else paintRate("default");
+  } catch (e) { paintRate("default"); }
+
+  // 2) 실시간 환율 시도 (실패 시 위 값 유지)
+  (async function () {
+    try {
+      const res = await fetch("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/vnd.json", { cache: "no-store" });
+      if (!res.ok) throw new Error("bad response");
+      const data = await res.json();
+      const r = data && data.vnd && data.vnd.krw;
+      if (!r) throw new Error("no rate");
+      RATE = r;
+      const date = data.date || new Date().toISOString().slice(0, 10);
+      try { localStorage.setItem("vnd_krw_rate", JSON.stringify({ rate: r, date: date })); } catch (e) {}
+      paintRate("live", date);
+    } catch (e) {
+      if (rateSource === "default") paintRate("default");
+    }
+  })();
 
   /* 긴급 패널 */
   document.getElementById("panel-emergency").innerHTML = `
@@ -321,7 +472,7 @@
   <div class="emergency"><h3>패밀리 메디컬 프랙티스 다낭</h3><p>한국어 진료 가능한 국제병원</p></div>
 `;
 
-  document.getElementById("panel-check").classList.add("active");
+  document.getElementById("panel-iti").classList.add("active");
 </script>
 </body>
 </html>
